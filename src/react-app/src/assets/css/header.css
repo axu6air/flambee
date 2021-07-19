@@ -1,0 +1,82 @@
+@import url("https://fonts.googleapis.com/css2?family=Patrick+Hand&display=swap");
+
+.header {
+  background-color: rgba(255, 255, 0, 0);
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 63px;
+  padding: 0;
+  margin: 0;
+}
+.header .header-brand {
+  margin: 0px;
+  background-color: rgba(255, 255, 0, 0);
+}
+
+.navbar-logo {
+  width: 30%;
+  margin-left: 40%;
+  opacity: 1 !important;
+  color: white !important;
+  font-family: "Patrick Hand";
+  font-size: 300%;
+  text-transform: uppercase;
+  margin-bottom: 0;
+  font-size: 3.25rem !important;
+  --text-align: center;
+}
+
+.dropdown-header {
+  background-color: rgba(17, 4, 22, 0.3) !important;
+  padding: 0px 0px;
+}
+
+div.dropdown-menu.show {
+  background-color: rgba(17, 4, 22, 0.8) !important;
+  border-radius: 8px !important;
+}
+
+dropdown-item {
+  color: #ffffff !important;
+}
+
+.navbar {
+  padding-top: 0px !important;
+  padding-bottom: 0px !important;
+}
+
+.navbar-header {
+  float: left;
+  padding: 0px;
+  text-align: center;
+  width: 100%;
+}
+.navbar-brand {
+  float: none;
+  margin-right: 0px !important;
+}
+
+.brand-logo {
+  font-family: "Patrick Hand";
+  font-size: 200% !important;
+  text-transform: uppercase;
+}
+
+.header-items {
+  float: right;
+  display: inline;
+  color: white;
+  margin-top: 10px;
+  padding-right: 30px;
+  padding-left: -30px;
+}
+
+.dropdown-item {
+  color: white !important;
+}
+
+.dropdown-item:hover {
+  color: black !important;
+}
