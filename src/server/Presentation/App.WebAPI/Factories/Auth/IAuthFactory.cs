@@ -1,14 +1,14 @@
-﻿using Flambee.Core.Configuration.Email;
-using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
-using Flambee.WebAPI.Models.Authentication;
+﻿using App.Core.Configuration.Email;
+using App.Core.Domain.Authentication;
+using App.Core.Domain.User;
+using App.WebAPI.Models.Authentication;
 using Microsoft.AspNetCore.Identity;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Factories.Auth
+namespace App.WebAPI.Factories.Auth
 {
     public interface IAuthFactory
     {

@@ -1,11 +1,13 @@
 import React, { Component } from "react";
 import { Redirect, Link } from "react-router-dom";
-import axios from "axios";
 import Username from "./Username";
+import { isEmailValid } from "../helper/HelperFunstions";
 import { FaUserAlt, FaKey } from "react-icons/fa";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { WiMoonAltFirstQuarter, WiMoonAltThirdQuarter } from "react-icons/wi";
 import "../../assets/css/authentication.css";
+import Loader from "../helper/Loader";
+import AuthService from "../../service/Auth";
 
 class Signup extends Component {
   constructor(props) {
@@ -39,14 +41,6 @@ class Signup extends Component {
     responseSucceeded: false,
   };
 
-  validateEmail = (email) => {
-    if (!email) return false;
-
-    const emailRegex =
-      /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return emailRegex.test(String(email).toLowerCase());
-  };
-
   handleInputChange = (event) => {
     const target = event.target;
     const value = target.type === "checkbox" ? target.checked : target.value;
@@ -75,30 +69,25 @@ class Signup extends Component {
     }));
   };
 
-  hanndleUsernameValidity = (isValid) => {
+  handleUsernameValidity = (isValid) => {
     console.log("isUsernameValid", isValid);
     this.setState({ isUsernameValid: isValid });
-  };
-
-  processErrorMessages = (errors) => {
-    this.setState({ errorResponse: true });
   };
 
   sendSignupRequest = async () => {
     const state = this.state;
     this.setState({ loading: true });
 
-    await axios
-      .post("/Auth/Register", state.user)
+    await AuthService.signup(state.user)
       .then((response) => {
-        console.log(response);
-        if (!response.data || !response.data.succeeded)
-          this.processErrorMessages(response.data.errorMessages);
-        else this.setState({ responseSucceeded: true });
+        if (response.status === 200) {
+          this.setState({ responseSucceeded: true });
+        } else {
+          this.setState({ responseSucceeded: false });
+        }
       })
       .catch((error) => {
-        console.error(error);
-        this.processErrorMessages(error.data.errorMessages);
+        this.setState({ responseSucceeded: false });
       })
       .then(() => this.setState({ loading: false }));
   };
@@ -122,7 +111,7 @@ class Signup extends Component {
     if (!state.user.email) {
       errorCount++;
       error.email = "email is required";
-    } else if (!self.validateEmail(state.user.email)) {
+    } else if (!isEmailValid(state.user.email)) {
       errorCount++;
       error.email = "invalid email";
     }
@@ -177,181 +166,184 @@ class Signup extends Component {
     }
 
     return (
-      <section>
-        <div className="home-main">
-          <div className="card-container">
-            <div className="container d-flex justify-content-center align-items-center">
-              <div className="card card-form">
-                <div className="card-header">
-                  <h3>Sign Up</h3>
-                </div>
-                <div className="card-body">
-                  <form
-                    onSubmit={(event) => {
-                      this.handleSubmit(event);
-                    }}
-                  >
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <WiMoonAltFirstQuarter />
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        name="firstName"
-                        className="form-control"
-                        placeholder="first name"
-                        autoComplete="nope"
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                    {this.state.error.firstName && (
-                      <div className="error-message">
-                        {this.state.error.firstName}
-                      </div>
-                    )}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <WiMoonAltThirdQuarter />
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        name="lastName"
-                        className="form-control"
-                        placeholder="last name"
-                        autoComplete="nope"
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                    {this.state.error.lastName && (
-                      <div className="error-message">
-                        {this.state.error.lastName}
-                      </div>
-                    )}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <FaUserAlt />
-                        </span>
-                      </div>
-                      <div className="text-container">
-                        <Username
-                          handleUsernameChange={(username) =>
-                            this.handleUsernameChange(username)
-                          }
-                          hanndleUsernameValidity={(valid) =>
-                            this.hanndleUsernameValidity(valid)
-                          }
+      <>
+        {this.state.loading && <Loader />}
+        <section>
+          <div className="home-main">
+            <div className="card-container">
+              <div className="container d-flex justify-content-center align-items-center">
+                <div className="card card-form">
+                  <div className="card-header">
+                    <h3>Signup</h3>
+                  </div>
+                  <div className="card-body">
+                    <form
+                      onSubmit={(event) => {
+                        this.handleSubmit(event);
+                      }}
+                    >
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <WiMoonAltFirstQuarter />
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          name="firstName"
+                          className="form-control"
+                          placeholder="first name"
+                          autoComplete="firstName"
+                          onChange={this.handleInputChange}
                         />
                       </div>
+                      {this.state.error.firstName && (
+                        <div className="error-message">
+                          {this.state.error.firstName}
+                        </div>
+                      )}
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <WiMoonAltThirdQuarter />
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          name="lastName"
+                          className="form-control"
+                          placeholder="last name"
+                          autoComplete="lastName"
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      {this.state.error.lastName && (
+                        <div className="error-message">
+                          {this.state.error.lastName}
+                        </div>
+                      )}
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <FaUserAlt />
+                          </span>
+                        </div>
+                        <div className="text-container">
+                          <Username
+                            handleUsernameChange={(username) =>
+                              this.handleUsernameChange(username)
+                            }
+                            handleUsernameValidity={(valid) =>
+                              this.handleUsernameValidity(valid)
+                            }
+                          />
+                        </div>
+                      </div>
+                      {this.state.error.username && (
+                        <div className="error-message">
+                          {this.state.error.username}
+                        </div>
+                      )}
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <FiMail />
+                          </span>
+                        </div>
+                        <input
+                          type="email"
+                          name="email"
+                          className="form-control"
+                          placeholder="email"
+                          autoComplete="emailAddress"
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      {this.state.error.email && (
+                        <div className="error-message">
+                          {this.state.error.email}
+                        </div>
+                      )}
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <FiPhone />
+                          </span>
+                        </div>
+                        <input
+                          type="text"
+                          name="phoneNumber"
+                          className="form-control"
+                          placeholder="phone number"
+                          autoComplete="phoneNumber"
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      {this.state.error.phoneNumber && (
+                        <div className="error-message">
+                          {this.state.error.phoneNumber}
+                        </div>
+                      )}
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <FaKey />
+                          </span>
+                        </div>
+                        <input
+                          type="password"
+                          name="password"
+                          className="form-control"
+                          placeholder="password"
+                          autoComplete="passwordAuto"
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      {this.state.error.password && (
+                        <div className="error-message">
+                          {this.state.error.password}
+                        </div>
+                      )}
+                      <div className="input-group form-group">
+                        <div className="input-group-prepend">
+                          <span className="input-group-text">
+                            <FaKey />
+                          </span>
+                        </div>
+                        <input
+                          type="password"
+                          name="confirmPassword"
+                          className="form-control"
+                          placeholder="confirm password"
+                          autoComplete="confirmPassword"
+                          onChange={this.handleInputChange}
+                        />
+                      </div>
+                      {this.state.error.confirmPassword && (
+                        <div className="error-message">
+                          {this.state.error.confirmPassword}
+                        </div>
+                      )}
+                      <div className="form-group" align="right">
+                        <input
+                          type="submit"
+                          value="Sign up"
+                          className="container d-flex justify-content-center btn login-btn"
+                        />
+                      </div>
+                    </form>
+                  </div>
+                  <div className="card-footer">
+                    <div className="d-flex justify-content-center links">
+                      Already have an account?<Link to="/Login">Sign in</Link>
                     </div>
-                    {this.state.error.username && (
-                      <div className="error-message">
-                        {this.state.error.username}
-                      </div>
-                    )}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <FiMail />
-                        </span>
-                      </div>
-                      <input
-                        type="email"
-                        name="email"
-                        className="form-control"
-                        placeholder="email"
-                        autoComplete="nope"
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                    {this.state.error.email && (
-                      <div className="error-message">
-                        {this.state.error.email}
-                      </div>
-                    )}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <FiPhone />
-                        </span>
-                      </div>
-                      <input
-                        type="text"
-                        name="phoneNumber"
-                        className="form-control"
-                        placeholder="phone number"
-                        autoComplete="nope"
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                    {this.state.error.phoneNumber && (
-                      <div className="error-message">
-                        {this.state.error.phoneNumber}
-                      </div>
-                    )}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <FaKey />
-                        </span>
-                      </div>
-                      <input
-                        type="password"
-                        name="password"
-                        className="form-control"
-                        placeholder="password"
-                        autoComplete="nope"
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                    {this.state.error.password && (
-                      <div className="error-message">
-                        {this.state.error.password}
-                      </div>
-                    )}
-                    <div className="input-group form-group">
-                      <div className="input-group-prepend">
-                        <span className="input-group-text">
-                          <FaKey />
-                        </span>
-                      </div>
-                      <input
-                        type="password"
-                        name="confirmPassword"
-                        className="form-control"
-                        placeholder="confirm password"
-                        autoComplete="nope"
-                        onChange={this.handleInputChange}
-                      />
-                    </div>
-                    {this.state.error.confirmPassword && (
-                      <div className="error-message">
-                        {this.state.error.confirmPassword}
-                      </div>
-                    )}
-                    <div className="form-group" align="right">
-                      <input
-                        type="submit"
-                        value="Sign up"
-                        className="container d-flex justify-content-center btn login-btn"
-                      />
-                    </div>
-                  </form>
-                </div>
-                <div className="card-footer">
-                  <div className="d-flex justify-content-center links">
-                    Already have an account?<Link to="/Login">Sign in</Link>
                   </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
+      </>
     );
   }
 }

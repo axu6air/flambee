@@ -1,22 +1,11 @@
-import axios from "axios";
 import React from "react";
 import { useEffect } from "react";
 import { Redirect } from "react-router-dom";
+import AuthService from "../../service/Auth";
 
 const Logout = () => {
-  localStorage.bearerToken = "";
-  localStorage.currentUser = null;
-
   useEffect(() => {
-    const logoutRequest = () => {
-      axios.post("/Logout").then((response) => {
-        if (response.status === 200) {
-          return <Redirect to="/Login" />;
-        }
-      });
-    };
-
-    logoutRequest();
+    AuthService.logout();
   });
 
   return <Redirect to="/Login" />;

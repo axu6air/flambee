@@ -3,14 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
-using Flambee.Service.AppServiceProviders.Authentication;
-using Flambee.Service.AppServiceProviders.User;
+using App.Service.AppServiceProviders.Authentication;
+using App.Service.AppServiceProviders.User;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
-namespace Flambee.WebAPI.Controllers
+namespace App.WebAPI.Controllers
 {
     //[Authorize]
     [ApiController]

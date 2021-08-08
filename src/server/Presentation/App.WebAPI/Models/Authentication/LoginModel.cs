@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel.DataAnnotations;
 
-namespace Flambee.WebAPI.Models.Authentication
+namespace App.WebAPI.Models.Authentication
 {
     public class LoginModel
     {

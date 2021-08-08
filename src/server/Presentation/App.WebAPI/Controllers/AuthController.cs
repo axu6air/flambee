@@ -1,14 +1,15 @@
-﻿
-using Flambee.WebAPI.DataTransferModel.Auth;
-using Flambee.WebAPI.Factories.Auth;
-using Flambee.WebAPI.Models;
-using Flambee.WebAPI.Models.Authentication;
-using Flambee.WebAPI.Models.User;
+﻿using App.Core.Configuration.Email;
+using App.Core.Domain.Authentication;
+using App.Service.AppServiceProviders.Authentication;
+using App.Service.AppServiceProviders.Email;
+using App.Service.AppServiceProviders.User;
+using App.WebAPI.DataTransferModel;
+using App.WebAPI.DataTransferModel.Auth;
+using App.WebAPI.Factories.Auth;
+//using App.WebAPI.Models;
+using App.WebAPI.Models.Authentication;
+using App.WebAPI.Models.User;
 using AutoMapper;
-using Flambee.Core.Domain.Authentication;
-using Flambee.Service.AppServiceProviders.Authentication;
-using Flambee.Service.AppServiceProviders.Email;
-using Flambee.Service.AppServiceProviders.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -17,11 +18,12 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Controllers
+namespace App.WebAPI.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -59,29 +61,7 @@ namespace Flambee.WebAPI.Controllers
                 await _authService.SignInAsync(user, true);
                 var userRoles = await _authService.GetRolesAsync(user);
 
-                var authClaims = new List<Claim>
-                {
-                    new Claim(ClaimTypes.Name, user.UserName),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim("UserID", user.Id.ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
-                };
-
-                foreach (var userRole in userRoles)
-                {
-                    authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-                }
-
-                var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
-
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddHours(3),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
-
-                
+                var token = GenerateJwt(user, userRoles);
 
                 var response = new LoginResponseModel
                 {
@@ -93,12 +73,13 @@ namespace Flambee.WebAPI.Controllers
 
                 return Ok(response);
             }
-            return Unauthorized(new LoginResponseModel
+            return BadRequest(new LoginResponseModel
             {
                 Status = StatusCodes.Status401Unauthorized,
                 Token = String.Empty,
                 UserInfoModel = null,
-                Message = "Username or password is incorrect"
+                Errors = new List<string> { "Username or password is incorrect" },
+                
             });
         }
 
@@ -171,9 +152,15 @@ namespace Flambee.WebAPI.Controllers
             var userExists = await _authService.FindByNameAsync(username);
 
             if (userExists != null)
-                return Ok(false);
+                return Ok(new UsernameAvailabilityResponseModel
+                { 
+                    Available = false
+                });
 
-            return Ok(true);
+            return Ok(new UsernameAvailabilityResponseModel
+            {
+                Available = true
+            });
         }
 
         [HttpPost]
@@ -221,21 +208,33 @@ namespace Flambee.WebAPI.Controllers
         public async Task<IActionResult> RecoveryPassword(RecoveryPasswordConfirmationModel confirmationModel)
         {
             if (!ModelState.IsValid)
-                return BadRequest();
+                return BadRequest(new BaseErrorModel
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Errors = new List<string> { "Please enter the fields correctly."}
+                });
 
             var applicationUser = await _userDetailsService.GetApplicationUserAsync(confirmationModel.Email);
 
             if (applicationUser == null)
-                return BadRequest();
+                return BadRequest(new BaseErrorModel
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Errors = new List<string> { "No such user." }
+                });
 
             var result = await _authService.ResetPasswordAsync(applicationUser, confirmationModel.Token, confirmationModel.Password);
 
             if (!result.Succeeded)
-                return BadRequest();
+                return BadRequest(new BaseErrorModel
+                {
+                    Status = StatusCodes.Status400BadRequest,
+                    Errors = result.Errors.Select(res => res.Description).ToList()
+                });
 
             return Ok(new BaseResponseModel
             {
-                Status = 200,
+                Status = StatusCodes.Status200OK,
                 Message = "Password successfully changed"
             });
         }
@@ -271,6 +270,34 @@ namespace Flambee.WebAPI.Controllers
             userInfoModel.UserModel = _mapper.Map<UserModel>(user);
 
             return userInfoModel;
+        }
+
+        private JwtSecurityToken GenerateJwt(ApplicationUser user, IList<string> userRoles)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
+
+            var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("UserID", user.Id.ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
+                };
+
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim(ClaimTypes.Role, userRole));
+            }
+
+            var token = new JwtSecurityToken(
+                issuer: _configuration["JWT:ValidIssuer"],
+                audience: _configuration["JWT:ValidAudience"],
+                expires: DateTime.Now.AddMinutes(1), //null,
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
+
+            return token;
+
         }
 
     }

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Models.User
+namespace App.WebAPI.Models.User
 {
     public class UserModel
     {

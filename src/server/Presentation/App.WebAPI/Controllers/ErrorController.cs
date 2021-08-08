@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Controllers
+namespace App.WebAPI.Controllers
 {
     public class ErrorController : ControllerBase
     {

@@ -1,6 +1,6 @@
 using System;
 
-namespace Flambee.WebAPI
+namespace App.WebAPI
 {
     public class WeatherForecast
     {

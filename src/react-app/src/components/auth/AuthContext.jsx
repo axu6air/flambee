@@ -1,4 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
+import { parseJwt } from "../helper/HelperFunstions";
+import AuthVerify from "./AuthVerify";
+import AuthService from "../../service/Auth";
 
 export const AuthContext = React.createContext();
 
@@ -14,14 +17,22 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem("currentUser"));
     const token = localStorage.getItem("bearerToken");
-    console.log(user);
-    console.log(token);
     setCurrentUser(user);
+
+    if (user) {
+      const decodedJwt = parseJwt(token);
+      console.log("-----Auth CONTEXT Verify------");
+      console.log(decodedJwt.exp * 1000);
+      console.log(decodedJwt.exp * 1000 < Date.now());
+      if (decodedJwt.exp * 1000 < Date.now()) {
+        AuthService.logout();
+      }
+    }
   }, []);
 
   return (
     <AuthContext.Provider value={{ currentUser, setCurrentUser }}>
-      {children}
+      <AuthVerify>{children}</AuthVerify>
     </AuthContext.Provider>
   );
 };

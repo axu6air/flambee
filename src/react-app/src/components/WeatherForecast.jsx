@@ -31,12 +31,15 @@ const WeatherForecast = () => {
           <h4>Weather forecast</h4>
           <ul style={{ listStyle: "none" }}>
             {weather.map((item, idx) => {
+              console.log(item);
               let date = new Date(item.date);
               console.log("date: ", date);
               return (
                 <li key={idx}>
-                  <p className="weather-forecast-item">
-                    <Moment format="MMMM Do">{date}</Moment> {item.summary}
+                  <p className="weather-forecast-item d-flex justify-content-center align-items-center">
+                    {/* {date.toString()} */}
+                    <Moment format="MMMM do">{date}</Moment>
+                    {" - " + item.summary + " " + item.temperatureC + "°C"}
                   </p>
                 </li>
               );

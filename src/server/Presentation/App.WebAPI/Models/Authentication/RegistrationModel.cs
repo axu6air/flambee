@@ -1,11 +1,12 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
 
-namespace Flambee.WebAPI.Models.Authentication
+namespace App.WebAPI.Models.Authentication
 {
     public class RegistrationModel
     {
         [Required(ErrorMessage = "User Name is required")]
+        [RegularExpression("^[-0-9A-Za-z_-]{4,15}$", ErrorMessage = "Invalid Username")]
         public string Username { get; set; }
 
         [EmailAddress]

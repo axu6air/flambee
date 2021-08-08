@@ -1,8 +1,8 @@
 using System.Linq;
-using Flambee.Core.Data;
-using Flambee.Core.Data.Mapping;
-using Flambee.Service.AppServiceProviders.User;
-using Flambee.WebAPI.Infrastructure.ServiceRegistrar;
+using App.Core.Data;
+using App.Core.Data.Mapping;
+using App.Service.AppServiceProviders.User;
+using App.WebAPI.Infrastructure.ServiceRegistrar;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,8 +16,9 @@ using Newtonsoft.Json.Serialization;
 using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
-namespace Flambee.WebAPI
+namespace App.WebAPI
 {
     public class Startup
     {
@@ -68,7 +69,6 @@ namespace Flambee.WebAPI
                 app.UseExceptionHandler("/Error");
                 app.UseHttpsRedirection();
             }
-
 
             app.UseRouting();
             app.UseCors(x => x

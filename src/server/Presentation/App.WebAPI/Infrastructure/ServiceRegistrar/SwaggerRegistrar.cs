@@ -8,7 +8,7 @@ using Swashbuckle.AspNetCore.Swagger;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerUI;
 
-namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
+namespace App.WebAPI.Infrastructure.ServiceRegistrar
 {
     public static class SwaggerRegistrar
     {

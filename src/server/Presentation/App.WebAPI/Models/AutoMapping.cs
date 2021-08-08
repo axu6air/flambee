@@ -1,6 +1,6 @@
-﻿using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
-using Flambee.WebAPI.Models.User;
+﻿using App.Core.Domain.Authentication;
+using App.Core.Domain.User;
+using App.WebAPI.Models.User;
 using AutoMapper;
 public class AutoMapping : Profile
 {

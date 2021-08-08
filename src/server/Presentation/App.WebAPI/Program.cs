@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Hosting;
 
-namespace Flambee.WebAPI
+namespace App.WebAPI
 {
     public class Program
     {

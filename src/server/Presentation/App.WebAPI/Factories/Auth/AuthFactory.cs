@@ -1,7 +1,7 @@
-﻿using Flambee.Core.Configuration.Email;
-using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
-using Flambee.WebAPI.Models.Authentication;
+﻿using App.Core.Configuration.Email;
+using App.Core.Domain.Authentication;
+using App.Core.Domain.User;
+using App.WebAPI.Models.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -13,7 +13,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Factories.Auth
+namespace App.WebAPI.Factories.Auth
 {
     public class AuthFactory : IAuthFactory
     {
@@ -30,15 +30,16 @@ namespace Flambee.WebAPI.Factories.Auth
                 return new RegistrationResponseModel
                 {
                     Succeeded = false,
-                    ErrorMessages = new List<string> { "User already exists" },
+                    Errors = new List<string> { "User already exists" },
                     Status = StatusCodes.Status400BadRequest
                 };
 
             var registrationResponseModel = new RegistrationResponseModel
             {
                 Succeeded = identityResultModel.Succeeded,
-                ErrorMessages = identityResultModel.Errors.Select(x => x.Description).ToList(),
-                Status = identityResultModel.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest
+                Errors = identityResultModel.Errors.Select(x => x.Description).ToList(),
+                Status = identityResultModel.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest,
+                Message = identityResultModel.Succeeded ? "Successfully registered" : "Registration unsuccessful"
             };
 
             return registrationResponseModel;

@@ -1,24 +1,33 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import "./index.css";
+import Notify from "./service/Notify";
 import App from "./components/App";
-import "bootstrap/dist/css/bootstrap.css";
 import axios from "axios";
+import "./index.css";
+import "bootstrap/dist/css/bootstrap.css";
 
 axios.defaults.baseURL = "http://localhost:50449";
 const token = localStorage.getItem("bearerToken");
 axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
 axios.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (!response.data.handleLocally) {
+      Notify.handleNotification(response);
+    }
+
+    return Promise.resolve(response);
+  },
   (error) => {
-    console.log(error);
-    if (error.status === 401) {
+    const statusCode = error.response ? error.response.status : null;
+    if (statusCode === 401) {
       localStorage.removeItem("bearerToken");
       localStorage.removeItem("currentUser");
     }
-    if (!error.status) {
-      console.log("Network error: " + error);
-    }
+
+    Notify.handleNotification(error.response);
+
+    return Promise.reject(error);
   }
 );
 

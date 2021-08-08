@@ -1,9 +1,9 @@
-using Flambee.Core;
-using Flambee.Core.Data;
-using Flambee.Service.AppServiceProviders.Authentication;
-using Flambee.Service.AppServiceProviders.Email;
-using Flambee.Service.AppServiceProviders.User;
-using Flambee.WebAPI.Factories.Auth;
+using App.Core;
+using App.Core.Data;
+using App.Service.AppServiceProviders.Authentication;
+using App.Service.AppServiceProviders.Email;
+using App.Service.AppServiceProviders.User;
+using App.WebAPI.Factories.Auth;
 using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.EntityFrameworkCore;
@@ -12,7 +12,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 
-namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
+namespace App.WebAPI.Infrastructure.ServiceRegistrar
 {
     public static class DependencyRegistrar
     {

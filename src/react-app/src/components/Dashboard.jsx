@@ -8,7 +8,7 @@ const Dashboard = () => {
   console.log(currentUser);
 
   return (
-    <section className="jumbotron text-center">
+    <section>
       <div className="home-main">
         <div className="container">
           <div className="vert-horz-center">

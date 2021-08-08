@@ -1,5 +1,5 @@
-﻿using Flambee.Service.AppServiceProviders.User;
-using Flambee.WebAPI.Models.User;
+﻿using App.Service.AppServiceProviders.User;
+using App.WebAPI.Models.User;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -11,7 +11,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Controllers
+namespace App.WebAPI.Controllers
 {
     [Controller]
     public abstract class BaseController : ControllerBase

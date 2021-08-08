@@ -47,6 +47,10 @@ dropdown-item {
   padding-bottom: 0px !important;
 }
 
+.full-header {
+  margin: 5px !important;
+}
+
 .navbar-header {
   float: left;
   padding: 0px;
@@ -58,19 +62,29 @@ dropdown-item {
   margin-right: 0px !important;
 }
 
-.brand-logo {
+.brand-header {
   font-family: "Patrick Hand";
   font-size: 200% !important;
   text-transform: uppercase;
+
+  position: absolute;
+}
+
+.brand-logo {
+  color: #ffc312 !important;
+  text-decoration: none;
+  border: 2px solid #ffc312;
+  letter-spacing: 5px;
+  padding: 10px;
+  background-color: black;
 }
 
 .header-items {
   float: right;
-  display: inline;
+  display: inline !important;
   color: white;
-  margin-top: 10px;
-  padding-right: 30px;
-  padding-left: -30px;
+  margin-top: 10px !important;
+  padding-right: 30px !important;
 }
 
 .dropdown-item {
@@ -78,5 +92,17 @@ dropdown-item {
 }
 
 .dropdown-item:hover {
-  color: black !important;
+  background-color: gray !important;
 }
+
+a.fill {
+  display: block;
+  height: 100%;
+  width: 100%;
+  text-decoration: none;
+  color: white !important;
+}
+
+/* .dropdown-item:hover {
+  background-color: green !important;
+} */

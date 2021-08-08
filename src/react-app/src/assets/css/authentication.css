@@ -1,14 +1,5 @@
 @import url("https://fonts.googleapis.com/css?family=Numans");
 
-.home-main {
-  width: 100%;
-  height: 100vh;
-  background: url(../img/Solar-Eclipse-Dark-4K-Ultra-HD-Wallpaper-3840x2160-9.jpg)
-    50% 50% no-repeat;
-  background-size: cover;
-  display: table;
-}
-
 .container {
   height: 100%;
   align-content: center;

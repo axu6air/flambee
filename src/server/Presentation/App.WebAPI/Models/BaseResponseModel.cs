@@ -1,5 +1,5 @@
 ﻿
-namespace Flambee.WebAPI.Models
+namespace App.WebAPI.Models
 {
     public class BaseResponseModel
     {

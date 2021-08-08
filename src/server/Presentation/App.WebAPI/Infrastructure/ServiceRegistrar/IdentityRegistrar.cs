@@ -1,14 +1,15 @@
-﻿using Flambee.Core.Data;
-using Flambee.Core.Domain.Authentication;
+﻿using App.Core.Data;
+using App.Core.Domain.Authentication;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
+namespace App.WebAPI.Infrastructure.ServiceRegistrar
 {
     public static class IdentityRegistrar
     {
@@ -20,15 +21,14 @@ namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
                .AddUserStore<UserStore<ApplicationUser, ApplicationRole, ApplicationDbContext, Guid>>()
                .AddRoleStore<RoleStore<ApplicationRole, ApplicationDbContext, Guid>>();
 
-            service.Configure<IdentityOptions>(opts => {
-                opts.Password.RequiredLength = 6;
-                opts.Password.RequireNonAlphanumeric = false;
-                opts.Password.RequireLowercase = false;
-                opts.Password.RequireUppercase = false;
-                opts.Password.RequireDigit = true;
-                opts.User.RequireUniqueEmail = true;
+            service.Configure<IdentityOptions>(option => {
+                option.Password.RequiredLength = 6;
+                option.Password.RequireNonAlphanumeric = false;
+                option.Password.RequireLowercase = false;
+                option.Password.RequireUppercase = false;
+                option.Password.RequireDigit = true;
+                option.User.RequireUniqueEmail = true;
             });
-
         }
     }
 }

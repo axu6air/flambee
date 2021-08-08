@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.DataTransferModel.Auth
+namespace App.WebAPI.DataTransferModel.Auth
 {
     public class RecoveryPasswordRequestModel
     {

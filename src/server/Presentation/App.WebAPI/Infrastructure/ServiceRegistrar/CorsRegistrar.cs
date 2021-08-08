@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
+namespace App.WebAPI.Infrastructure.ServiceRegistrar
 {
     public static class CorsRegistrar
     {

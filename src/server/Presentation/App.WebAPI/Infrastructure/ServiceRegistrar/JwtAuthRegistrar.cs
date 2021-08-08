@@ -10,11 +10,11 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
+namespace App.WebAPI.Infrastructure.ServiceRegistrar
 {
     public static class JwtAuthRegistrar
     {
-        public static AuthenticationBuilder RegisterJwtAuth(this IServiceCollection service, IConfiguration Configuration)
+        public static AuthenticationBuilder RegisterJwtAuth(this IServiceCollection service, IConfiguration configuration)
         {
             return service.AddAuthentication(options =>
             {
@@ -30,9 +30,9 @@ namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
                 {
                     ValidateIssuer = true,
                     ValidateAudience = true,
-                    ValidAudience = Configuration["JWT:ValidAudience"],
-                    ValidIssuer = Configuration["JWT:ValidIssuer"],
-                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["JWT:Secret"]))
+                    ValidAudience = configuration["JWT:ValidAudience"],
+                    ValidIssuer = configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]))
                 };
             });
         }
