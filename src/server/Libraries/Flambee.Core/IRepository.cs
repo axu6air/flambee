@@ -11,8 +11,8 @@ namespace Flambee.Core
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {
         Task<TEntity> GetByIdAsync(object id);
-        Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> predicate = null);
         Task<IList<TEntity>> GetByIdsAsync(IList<object> ids);
+        Task<TEntity> GetByProperty(Expression<Func<TEntity, bool>> predicate = null);
         IList<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate = null);
         Task<IList<TEntity>> GetAllAsync(Expression<Func<TEntity, bool>> predicate = null);
         Task<IPagedList<TEntity>> GetAllPagedAsync(Func<IQueryable<TEntity>, IQueryable<TEntity>> func = null,
@@ -26,6 +26,6 @@ namespace Flambee.Core
         Task DeleteAsync(TEntity entity);
         Task<int> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
         Task<IList<TEntity>> ExecuteStoredProcedureAsync(string procedureName, params object[] parameters);
-        Task<List<object>> ExecutedProcedureObjectAsync(string procedureName, params object[] parameters);
+        Task<List<object>> ExecuteProcedureObjectAsync(string procedureName, params object[] parameters);
     }
 }

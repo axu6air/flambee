@@ -3,6 +3,7 @@ using Flambee.Core.Domain.Authentication;
 using Flambee.Core.Domain.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,20 +42,6 @@ namespace Flambee.Service.AppServiceProviders.User
             return userInfo;
         }
 
-        //public async Task<UserInfo> GetUserInfoById(Guid id)
-        //{
-        //    try
-        //    {
-        //    var applicationUser = _userManager.Users.Where(x => x.Id == id).FirstOrDefault();
-        //    var userInfo = await _userInfoRepository.GetByIdAsync(applicationUser.Id);
-
-        //    return userInfo;
-        //    } catch (Exception ex)
-        //    {
-        //        throw new Exception();
-        //    }
-        //}
-
         public async Task<UserInfo> GetUserInfoById(Guid id)
         {
             return await _userInfoRepository.GetByIdAsync(x => x.ApplicationUserId == id);
@@ -67,7 +54,7 @@ namespace Flambee.Service.AppServiceProviders.User
 
         public async Task<IList<UserInfo>> GetUserInfoByIds(IList<Guid> ids)
         {
-            var applicationUsers = _userManager.Users.Where(x => ids.Contains(x.Id)).ToList();
+            var applicationUsers = await _userManager.Users.Where(x => ids.Contains(x.Id)).ToListAsync();
             var userInfo = await _userInfoRepository.GetByIdsAsync((IList<object>)applicationUsers.Select(x => x.Id).ToList());
 
             return userInfo;
@@ -84,9 +71,14 @@ namespace Flambee.Service.AppServiceProviders.User
 
         public async Task DeleteUserInfo(UserInfo userInfo)
         {
-            var applicationUser = _userManager.Users.Where(x => x.Id == userInfo.ApplicationUserId).FirstOrDefault();
-            await _userInfoRepository.DeleteAsync(userInfo);
-            await _userManager.DeleteAsync(applicationUser);
+            var applicationUser = await _userManager.Users.Where(x => x.Id == userInfo.ApplicationUserId).FirstOrDefaultAsync();
+
+            if (applicationUser != null)
+            {
+                await _userInfoRepository.DeleteAsync(userInfo);
+                await _userManager.DeleteAsync(applicationUser);
+            }
+
         }
 
         public async Task<ApplicationUser> GetLoggedInApplicationUserAsync()
@@ -96,6 +88,7 @@ namespace Flambee.Service.AppServiceProviders.User
             if (user != null)
             {
                 user.PasswordHash = null;
+                var user15 = await _userInfoRepository.GetByIdAsync(x => x.ApplicationUserId == user.Id);
                 user.UserInfo = _userInfoRepository.GetAllAsync(x => x.ApplicationUserId == user.Id).Result.FirstOrDefault();
             }
 

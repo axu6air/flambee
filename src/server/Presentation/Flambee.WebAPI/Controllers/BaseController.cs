@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication;
 
 namespace Flambee.WebAPI.Controllers
 {
@@ -22,8 +23,8 @@ namespace Flambee.WebAPI.Controllers
         {
             var mapper = HttpContext.RequestServices.GetService<IMapper>();
             var userDetailsService = HttpContext.RequestServices.GetService<IUserInfoService>();
+            var token = await HttpContext.GetTokenAsync("access_token");
             var user = await userDetailsService.GetLoggedInApplicationUserAsync();
-
             if (user == null)
                 return new UserInfoModel(); 
 
@@ -32,6 +33,8 @@ namespace Flambee.WebAPI.Controllers
 
             return userInfoModel;
         }
+
+
 
     }
 }

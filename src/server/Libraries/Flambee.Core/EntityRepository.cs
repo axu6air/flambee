@@ -24,15 +24,14 @@ namespace Flambee.Core
         {
             return await _context.FindAsync<TEntity>(id);
         }
-
-        public async Task<TEntity> GetByIdAsync(Expression<Func<TEntity, bool>> predicate = null)
-        {
-            return await _context.Set<TEntity>().Where(predicate).FirstOrDefaultAsync();
-        }
-
+        
         public async Task<IList<TEntity>> GetByIdsAsync(IList<object> ids)
         {
             return await _context.Set<TEntity>().Where(x => ids.Contains(x.Id)).ToListAsync();
+        }
+        public async Task<TEntity> GetByProperty(Expression<Func<TEntity, bool>> predicate = null)
+        {
+            return await _context.Set<TEntity>().Where(predicate).FirstOrDefaultAsync();
         }
 
         public IList<TEntity> GetAll(Expression<Func<TEntity, bool>> predicate = null)
@@ -129,7 +128,7 @@ namespace Flambee.Core
             return await _context.Set<TEntity>().FromSqlRaw(procedureName, parameters).Select(x => (TEntity)x).ToListAsync();
         }
 
-        public async Task<List<object>> ExecutedProcedureObjectAsync(string procedureName, params object[] parameters)
+        public async Task<List<object>> ExecuteProcedureObjectAsync(string procedureName, params object[] parameters)
         {
             return await _context.Set<object>().FromSqlRaw(procedureName, parameters)
                        .Select(e => (object)e)
