@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.13.0" />
+    <PackageReference Include="MimeKit" Version="2.13.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Flambee.Core\Flambee.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Flambee.Core">
+      <HintPath>..\Flambee.Core\bin\Debug\net5.0\Flambee.Core.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
