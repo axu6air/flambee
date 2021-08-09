@@ -73,6 +73,8 @@ namespace Flambee.Core.Data
 
         public DbSet<UserInfo> UserInfo { get; set; }
 
+        public DbSet<Avatar> Avatar { get; set; }
+
         #endregion
 
     }

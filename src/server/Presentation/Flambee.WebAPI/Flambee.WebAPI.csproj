@@ -25,6 +25,7 @@
     <Folder Include="Models\Authentication\RequestModel\" />
     <Folder Include="Models\DataTransferModel\" />
     <Folder Include="Models\ResponseModel\" />
+    <Folder Include="wwwroot\Avatars\" />
   </ItemGroup>
 
   <ItemGroup>
