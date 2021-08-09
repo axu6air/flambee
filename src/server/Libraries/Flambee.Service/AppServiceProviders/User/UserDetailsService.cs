@@ -44,7 +44,7 @@ namespace Flambee.Service.AppServiceProviders.User
 
         public async Task<UserInfo> GetUserInfoById(Guid id)
         {
-            return await _userInfoRepository.GetByIdAsync(x => x.ApplicationUserId == id);
+            return await _userInfoRepository.GetByProperty(x => x.ApplicationUserId == id);
         }
 
         public async Task<IList<UserInfo>> GetUserInfoByIds(IList<int> ids)
@@ -88,7 +88,6 @@ namespace Flambee.Service.AppServiceProviders.User
             if (user != null)
             {
                 user.PasswordHash = null;
-                var user15 = await _userInfoRepository.GetByIdAsync(x => x.ApplicationUserId == user.Id);
                 user.UserInfo = _userInfoRepository.GetAllAsync(x => x.ApplicationUserId == user.Id).Result.FirstOrDefault();
             }
 
