@@ -99,7 +99,7 @@ namespace Flambee.WebAPI.Controllers
             };
 
             var result = await _authService.CreateAsync(user, model.Password);
-            var response = _authFactory.PrepareRegistrationResponseModel(result);
+            var response = _authFactory.PrepareRegistrationResponseModel(result, user);
 
             if (!result.Succeeded)
                 return BadRequest(response);

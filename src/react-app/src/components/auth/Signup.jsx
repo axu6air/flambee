@@ -8,12 +8,14 @@ import { WiMoonAltFirstQuarter, WiMoonAltThirdQuarter } from "react-icons/wi";
 import "../../assets/css/authentication.css";
 import Loader from "../helper/Loader";
 import AuthService from "../../service/Auth";
+import AvatarUpload from "../avatar/AvatarUpload";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 class Signup extends Component {
-  constructor(props) {
-    super(props);
-    this.usernameRef = React.createRef();
-  }
+  // constructor(props) {
+  //   super(props);
+  // }
 
   state = {
     user: {
@@ -24,6 +26,12 @@ class Signup extends Component {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
+      avatarUploadModel: {
+        avatar: null,
+        avatarBase64: null,
+        previewBase64: null,
+        title: "",
+      },
     },
     isFormValid: false,
     loading: false,
@@ -38,6 +46,13 @@ class Signup extends Component {
       password: "",
       confirmPassword: "",
     },
+    avatar: {
+      avatarImage: null,
+      avatarBase64: null,
+      previewBase64: null,
+      title: "",
+    },
+    avatarForm: null,
     responseSucceeded: false,
   };
 
@@ -75,12 +90,21 @@ class Signup extends Component {
   };
 
   sendSignupRequest = async () => {
-    const state = this.state;
     this.setState({ loading: true });
+    const state = this.state;
 
     await AuthService.signup(state.user)
       .then((response) => {
-        if (response.status === 200) {
+        if (response.status === 200 && response.data.userId) {
+          if (state.avatar.avatarBase64) {
+            const avatarForm = this.prepareAvatarForm(
+              state.avatar,
+              response.data.userId
+            );
+
+            this.sendAvatarUploadRequest(avatarForm);
+          }
+
           this.setState({ responseSucceeded: true });
         } else {
           this.setState({ responseSucceeded: false });
@@ -90,6 +114,16 @@ class Signup extends Component {
         this.setState({ responseSucceeded: false });
       })
       .then(() => this.setState({ loading: false }));
+  };
+
+  sendAvatarUploadRequest = async (avatarForm) => {
+    try {
+      await axios.post("/UploadAvatar", avatarForm, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+    } catch (error) {
+      toast.error("Could not upload avatar");
+    }
   };
 
   validateForm = () => {
@@ -148,6 +182,32 @@ class Signup extends Component {
     return errorCount === 0 ? true : false;
   };
 
+  handleAvatar = (avatar) => {
+    if (avatar) {
+      this.setState({
+        avatar: {
+          ...this.state.avatar,
+          avatarImage: avatar.avatar,
+          avatarBase64: avatar.avatarBase64,
+          previewBase64: avatar.previewBase64,
+          title: avatar.title,
+        },
+      });
+    }
+  };
+
+  prepareAvatarForm = (avatar, userId) => {
+    let avatarForm = new FormData();
+
+    avatarForm.append("avatarImage", avatar.avatarImage);
+    avatarForm.append("avatarBase64", avatar.avatarBase64);
+    avatarForm.append("previewBase64", avatar.previewBase64);
+    avatarForm.append("title", avatar.title);
+    avatarForm.append("userId", userId);
+
+    return avatarForm;
+  };
+
   handleSubmit = (event) => {
     event.preventDefault();
 
@@ -182,6 +242,12 @@ class Signup extends Component {
                         this.handleSubmit(event);
                       }}
                     >
+                      <div>
+                        <AvatarUpload
+                          avatar={this.state.avatar}
+                          onAvatarSelect={this.handleAvatar}
+                        />
+                      </div>
                       <div className="input-group form-group">
                         <div className="input-group-prepend">
                           <span className="input-group-text">

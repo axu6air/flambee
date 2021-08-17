@@ -5,6 +5,17 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Models\ResponseModel\**" />
+    <Compile Remove="wwwroot\Avatars\**" />
+    <Content Remove="Models\ResponseModel\**" />
+    <Content Remove="wwwroot\Avatars\**" />
+    <EmbeddedResource Remove="Models\ResponseModel\**" />
+    <EmbeddedResource Remove="wwwroot\Avatars\**" />
+    <None Remove="Models\ResponseModel\**" />
+    <None Remove="wwwroot\Avatars\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Autofac" Version="6.2.0" />
     <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="7.1.0" />
     <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
@@ -15,6 +26,7 @@
     </PackageReference>
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
+    <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -24,9 +36,8 @@
 
   <ItemGroup>
     <Folder Include="Models\Authentication\RequestModel\" />
-    <Folder Include="Models\DataTransferModel\" />
-    <Folder Include="Models\ResponseModel\" />
-    <Folder Include="wwwroot\Avatars\" />
+    <Folder Include="wwwroot\Images\Avatars\" />
+    <Folder Include="wwwroot\Images\PostImages\" />
   </ItemGroup>
 
   <ItemGroup>

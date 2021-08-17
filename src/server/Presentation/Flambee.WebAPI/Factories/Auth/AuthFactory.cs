@@ -24,7 +24,7 @@ namespace Flambee.WebAPI.Factories.Auth
             _environment = environment;
         }
 
-        public RegistrationResponseModel PrepareRegistrationResponseModel(IdentityResult identityResultModel = null)
+        public RegistrationResponseModel PrepareRegistrationResponseModel(IdentityResult identityResultModel = null, ApplicationUser applicationUser = null)
         {
             if (identityResultModel == null)
                 return new RegistrationResponseModel
@@ -39,7 +39,8 @@ namespace Flambee.WebAPI.Factories.Auth
                 Succeeded = identityResultModel.Succeeded,
                 Errors = identityResultModel.Errors.Select(x => x.Description).ToList(),
                 Status = identityResultModel.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest,
-                Message = identityResultModel.Succeeded ? "Successfully registered" : "Registration unsuccessful"
+                Message = identityResultModel.Succeeded ? "Successfully registered" : "Registration unsuccessful",
+                UserId = identityResultModel.Succeeded ? applicationUser.Id : Guid.Empty
             };
 
             return registrationResponseModel;

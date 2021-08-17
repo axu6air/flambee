@@ -9,5 +9,6 @@ namespace Flambee.WebAPI.Models.Authentication
     public class RegistrationResponseModel : BaseErrorModel
     {
         public bool Succeeded { get; set; }
+        public Guid UserId { get; set; }
     }
 }

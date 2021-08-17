@@ -68,6 +68,36 @@ namespace Flambee.Core.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Avatar",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    AvatarBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    PreviewBase64 = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Url = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    MimeType = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    DefaultHeight = table.Column<double>(type: "float", nullable: false),
+                    DefaultWidth = table.Column<double>(type: "float", nullable: false),
+                    UploadTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ModifiedTime = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    DisplayName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false),
+                    UserId = table.Column<Guid>(type: "uniqueidentifier", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Avatar", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Avatar_User_UserId",
+                        column: x => x.UserId,
+                        principalTable: "User",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "UserClaim",
                 columns: table => new
                 {
@@ -176,6 +206,11 @@ namespace Flambee.Core.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_Avatar_UserId",
+                table: "Avatar",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "RoleNameIndex",
                 table: "Role",
                 column: "NormalizedName",
@@ -223,6 +258,9 @@ namespace Flambee.Core.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Avatar");
+
             migrationBuilder.DropTable(
                 name: "RoleClaim");
 

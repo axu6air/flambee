@@ -48,7 +48,7 @@ const Username = ({ handleUsernameChange, handleUsernameValidity }) => {
         cancelToken: cancelSource.token,
       });
       setResult(response.data.available);
-      handleUsernameValidity(response.data);
+      handleUsernameValidity(response.data.available);
     } catch (thrown) {
       if (axios.isCancel(thrown)) {
         console.log("Request canceled", thrown.message);

@@ -12,7 +12,7 @@ namespace Flambee.WebAPI.Factories.Auth
 {
     public interface IAuthFactory
     {
-        public RegistrationResponseModel PrepareRegistrationResponseModel(IdentityResult identityResultModel = null);
+        public RegistrationResponseModel PrepareRegistrationResponseModel(IdentityResult identityResultModel = null, ApplicationUser applicationUser = null);
         public UserInfo PrepareUserInfo(RegistrationModel registrationModel, ApplicationUser applicationUser);
         EmailRequest PrepareRecoveryPasswordEmailRequest(string toEmail, string recoveryPassworLink);
     }

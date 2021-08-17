@@ -64,12 +64,19 @@ namespace Flambee.Core
 
         public async Task<TEntity> InsertAsync(TEntity entity)
         {
-            if (entity == null)
-                throw new ArgumentNullException(nameof(entity));
+            try
+            {
+                if (entity == null)
+                    throw new ArgumentNullException(nameof(entity));
 
-            await _context.Set<TEntity>().AddAsync(entity);
-            await _context.SaveChangesAsync();
-            return entity;
+                await _context.Set<TEntity>().AddAsync(entity);
+                await _context.SaveChangesAsync();
+                return entity;
+            } catch (Exception ex)
+            {
+                return null;
+            }
+            
         }
 
         public async Task<IList<TEntity>> InsertAsync(IList<TEntity> entities)

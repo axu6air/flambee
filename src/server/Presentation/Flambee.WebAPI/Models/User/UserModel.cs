@@ -7,6 +7,7 @@ namespace Flambee.WebAPI.Models.User
 {
     public class UserModel
     {
+        public Guid Id { get; set; }
         public bool LockoutEnabled { get; set; }
         public DateTimeOffset? LockoutEnd { get; set; }
         public bool TwoFactorEnabled { get; set; }

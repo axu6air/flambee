@@ -19,6 +19,7 @@ class Notify {
   handleNotification = (response) => {
     const self = this;
     const statusCode = response.status;
+    console.log(response);
 
     try {
       if (statusCode === 200 && response.data.message) {

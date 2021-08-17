@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 
 namespace Flambee.WebAPI
 {
@@ -53,6 +54,12 @@ namespace Flambee.WebAPI
             services.RegisterJwtAuth(Configuration);
             services.RegisterCors();
 
+            //services.Configure<FormOptions>(o => {
+            //    o.ValueLengthLimit = int.MaxValue;
+            //    o.MultipartBodyLengthLimit = int.MaxValue;
+            //    o.MemoryBufferThreshold = int.MaxValue;
+            //});
+
             services.AddSwaggerDocumentation();
         }
 
@@ -80,8 +87,7 @@ namespace Flambee.WebAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints =>  endpoints.MapControllers()
-            );
+            app.UseEndpoints(endpoints =>  endpoints.MapControllers());
         }
     }
 }

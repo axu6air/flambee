@@ -1,4 +1,5 @@
 ﻿using Flambee.Core.Domain.Authentication;
+using Flambee.Core.Domain.Image;
 using Flambee.Core.Domain.User;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
