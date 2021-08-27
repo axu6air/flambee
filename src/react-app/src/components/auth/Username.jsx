@@ -1,14 +1,20 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle, faTimes } from "@fortawesome/free-solid-svg-icons";
 import loaderGIF from "../../assets/img/loader-sm.gif";
 
-const Username = ({ handleUsernameChange, handleUsernameValidity }) => {
+const Username = ({
+  handleUsernameChange,
+  handleUsernameValidity,
+  usernameRegex,
+}) => {
   let cancelSource;
   const [result, setResult] = useState(false);
   const [loader, setLoader] = useState(false);
   const username = useRef("");
+
+  useEffect(() => {});
 
   const generateLogo = () => {
     const validityStyle = {
@@ -31,10 +37,13 @@ const Username = ({ handleUsernameChange, handleUsernameValidity }) => {
   };
 
   const validateUsername = async () => {
-    const searchTerm = username.current.value;
+    const usernameInput = username.current.value;
     setResult(false);
 
-    if (searchTerm.length < 4) return;
+    const regex = new RegExp(usernameRegex);
+    if (!regex.test(usernameInput)) return;
+
+    console.log(!regex.test(usernameInput));
 
     if (cancelSource) cancelSource.cancel();
 
@@ -44,7 +53,7 @@ const Username = ({ handleUsernameChange, handleUsernameValidity }) => {
       setLoader(true);
       setResult(false);
       const response = await axios.get("/CheckUsernameAvailability", {
-        params: { username: searchTerm },
+        params: { username: usernameInput },
         cancelToken: cancelSource.token,
       });
       setResult(response.data.available);

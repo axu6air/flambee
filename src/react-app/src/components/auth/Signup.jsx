@@ -13,10 +13,6 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 class Signup extends Component {
-  // constructor(props) {
-  //   super(props);
-  // }
-
   state = {
     user: {
       firstName: "",
@@ -54,7 +50,24 @@ class Signup extends Component {
     },
     avatarForm: null,
     responseSucceeded: false,
+    regexFields: {
+      username: "",
+    },
   };
+
+  componentDidMount() {
+    axios.get("/GetFormRules").then((response) => {
+      if (response && response.data) {
+        const usernameRegex = response.data.username;
+        this.setState((prevState) => ({
+          regexFields: {
+            ...prevState.regexFields,
+            username: usernameRegex,
+          },
+        }));
+      }
+    });
+  }
 
   handleInputChange = (event) => {
     const target = event.target;
@@ -302,6 +315,7 @@ class Signup extends Component {
                             handleUsernameValidity={(valid) =>
                               this.handleUsernameValidity(valid)
                             }
+                            usernameRegex={this.state.regexFields.username}
                           />
                         </div>
                       </div>

@@ -22,6 +22,8 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
+using System.Text.RegularExpressions;
+using Flambee.Core.Configuration.User;
 
 namespace Flambee.WebAPI.Controllers
 {
@@ -149,18 +151,16 @@ namespace Flambee.WebAPI.Controllers
 
             username = username.Trim();
 
+            Regex regex = new Regex(UserRules.Username);
+            if (!regex.IsMatch(username))
+                return Ok(new UsernameAvailabilityResponseModel(false));
+
             var userExists = await _authService.FindByNameAsync(username);
 
             if (userExists != null)
-                return Ok(new UsernameAvailabilityResponseModel
-                { 
-                    Available = false
-                });
+                return Ok(new UsernameAvailabilityResponseModel(false));
 
-            return Ok(new UsernameAvailabilityResponseModel
-            {
-                Available = true
-            });
+            return Ok(new UsernameAvailabilityResponseModel(true));
         }
 
         [HttpPost]
@@ -238,6 +238,14 @@ namespace Flambee.WebAPI.Controllers
                 Message = "Password successfully changed"
             });
         }
+
+        [HttpGet]
+        [Route("/GetFormRules")]
+        public IActionResult GetFormRules()
+        {
+            FormRulesModel rulesModel = new();
+            return Ok(rulesModel);
+        } 
 
         private async Task AssignRole(ApplicationUser user, RegistrationModel model, bool isAdmin = false)
         {

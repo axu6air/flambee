@@ -7,12 +7,13 @@ namespace Flambee.WebAPI.DataTransferModel.Auth
 {
     public class UsernameAvailabilityResponseModel : BaseResponseModel
     {
-        public UsernameAvailabilityResponseModel()
+        public UsernameAvailabilityResponseModel(bool available)
         {
             base.HandleLocally = true;
+            this.Available = available;
         }
 
-        public bool Available { get; set; }
+        public bool Available { get; set;  }
 
     }
 }
