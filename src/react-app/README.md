@@ -1,8 +1,8 @@
 # Installation
 
-npm install react-scripts --save
-npm i --save @fortawesome/free-solid-svg-icons
-npm i @fortawesome/react-fontawesome
+### `npm install react-scripts --save` 
+### `npm i --save @fortawesome/free-solid-svg-icons`
+### `npm i @fortawesome/react-fontawesome`
 
 # Getting Started with Create React App
 
