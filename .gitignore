@@ -404,7 +404,9 @@ Icon
 src/server/Libraries/App.Core/bin/*
 
 # exclude everything
+!src/server/Presentation/Flambee.WebAPI/wwwroot/Images/Avatars
 src/server/Presentation/Flambee.WebAPI/wwwroot/Images/Avatars/*
+!src/server/Presentation/Flambee.WebAPI/wwwroot/Images/PostImages
 src/server/Presentation/Flambee.WebAPI/wwwroot/Images/PostImages/*
 
 # Files that might appear in the root of a volume

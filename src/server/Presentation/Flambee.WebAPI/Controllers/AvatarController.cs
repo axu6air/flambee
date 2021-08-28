@@ -2,7 +2,9 @@
 using Flambee.Service.AppServiceProviders.Image;
 using Flambee.WebAPI.Factories.Image;
 using Flambee.WebAPI.Models.Authentication;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using System;
 using System.Drawing;
 using System.IO;
@@ -15,12 +17,14 @@ namespace Flambee.WebAPI.Controllers
     {
         private readonly IImageService _imageService;
         private readonly IImageFactory _imageFactory;
+        private readonly IHostEnvironment _environment;
 
 
-        public AvatarController(IImageService imageService, IImageFactory imageFactory)
+        public AvatarController(IImageService imageService, IImageFactory imageFactory, IHostEnvironment environment)
         {
             _imageService = imageService;
             _imageFactory = imageFactory;
+            _environment = environment;
         }
 
 

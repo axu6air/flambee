@@ -8,6 +8,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
+using Flambee.Core.Configuration.Image;
 
 namespace Flambee.Service.AppServiceProviders.Image
 {
@@ -33,26 +34,24 @@ namespace Flambee.Service.AppServiceProviders.Image
             return null;
         }
 
+        public string CheckImagePath(string path)
+        {
+            if(!Directory.Exists(path))
+                Directory.CreateDirectory(path);
+
+            return path;
+        }
+
         public string GetAvatarPath(string filename)
         {
-            return _environment.WebRootPath
-                                + Path.DirectorySeparatorChar.ToString()
-                                + "Images"
-                                + Path.DirectorySeparatorChar.ToString()
-                                + "Avatars"
-                                + Path.DirectorySeparatorChar.ToString()
-                                + filename;
+            var path = CheckImagePath(ImagePath.AvatarPath);
+            return path + filename;
         }
 
         public string GetPostImagePath(string filename)
         {
-            return _environment.WebRootPath
-                                + Path.DirectorySeparatorChar.ToString()
-                                + "Images"
-                                + Path.DirectorySeparatorChar.ToString()
-                                + "PostImages"
-                                + Path.DirectorySeparatorChar.ToString()
-                                + filename;
+            var path = CheckImagePath(ImagePath.PostImagePath);
+            return path + filename;
         }
 
         public string GetUniqueFileName(string fileName)
@@ -68,7 +67,7 @@ namespace Flambee.Service.AppServiceProviders.Image
         {
             try
             {
-                image.CopyTo(new FileStream(filePath, FileMode.Create));
+                image.CopyTo(new FileStream(_environment.WebRootPath + filePath, FileMode.Create));
                 return true;
             } 
             catch(Exception ex)

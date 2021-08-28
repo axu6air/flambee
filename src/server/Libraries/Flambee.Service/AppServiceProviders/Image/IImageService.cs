@@ -12,6 +12,8 @@ namespace Flambee.Service.AppServiceProviders.Image
     {
         Task<Avatar> AddAvatar(Avatar avatar);
 
+        string CheckImagePath(string path);
+
         string GetAvatarPath(string filename);
 
         string GetPostImagePath(string filename);
