@@ -14,12 +14,14 @@ namespace Flambee.Service.AppServiceProviders.Image
 
         string CheckImagePath(string path);
 
-        string GetAvatarPath(string filename);
+        string GetAvatarPath(string imageName);
 
-        string GetPostImagePath(string filename);
+        string GetPostImagePath(string imageName);
 
-        string GetUniqueFileName(string fileName);
+        string GetUniqueImageName(string imageName);
 
         bool UploadImage(IFormFile image, string filePath);
+
+        Task<Avatar> GetAvatar(Guid userId);
     }
 }

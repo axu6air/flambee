@@ -1,7 +1,9 @@
 ﻿using Flambee.Core.Domain.Image;
 using Flambee.Service.AppServiceProviders.Image;
+using Flambee.WebAPI.DataTransferModel.Image;
 using Flambee.WebAPI.Factories.Image;
 using Flambee.WebAPI.Models.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
@@ -36,7 +38,7 @@ namespace Flambee.WebAPI.Controllers
             {
                 try
                 {
-                    var newFilename = _imageService.GetUniqueFileName(model.AvatarImage.FileName);
+                    var newFilename = _imageService.GetUniqueImageName(model.AvatarImage.FileName);
                     var filePath = _imageService.GetAvatarPath(newFilename);
                     var result = _imageService.UploadImage(model.AvatarImage, filePath);
 
@@ -56,6 +58,27 @@ namespace Flambee.WebAPI.Controllers
             }
 
             return BadRequest();
+        }
+
+        [Authorize]
+        [HttpGet]
+        [Route("/GetAvatar")]
+        public async Task<IActionResult> GetUserAvatar(Guid userId)
+        {
+            //Guid.TryParse(userId, out Guid userIdGuid);
+            var avatar = await _imageService.GetAvatar(userId);
+
+            var avatarModel = new AvatarModel();
+
+            if (avatar != null)
+            {
+                avatarModel.AvatarBase64 = avatar.AvatarBase64;
+                avatarModel.PreviewBase64 = avatar.PreviewBase64;
+                avatarModel.Title = avatar.Title;
+                avatarModel.Id = avatar.Id;
+            }
+
+            return Ok(avatarModel);
         }
     }
 }

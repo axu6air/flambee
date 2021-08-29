@@ -11,40 +11,83 @@ import {
 import "../../assets/css/avatar-upload.css";
 import ReactModal from "react-modal";
 import { toast } from "react-toastify";
+import { AuthContext } from "../auth/AuthContext";
 
 class AvatarUpload extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      selectedAvatar: null,
-      selectedAvatarBase64: "",
-      preview: null,
+      avatarId: 0,
+      avatarImage: null,
+      avatarBase64: "",
+      previewBase64: null,
+      newAvatar: null,
       showModal: false,
       title: "",
       loaded: 0,
     };
   }
 
-  componentDidMount() {
-    ReactModal.setAppElement("#modal-man");
+  static contextType = AuthContext;
+
+  // static getDerivedStateFromProps(props, state) {
+  //   if (props.triggerRequired && props.triggerUpload) {
+  //     this.uploadAvatar();
+  //   }
+
+  //   // if (props.avatar && props.avatar.previewBase64 !== state.previewBase64) {
+  //   //   console.log(props.avatar);
+  //   //   return {
+  //   //     avatarBase64: props.avatar.avatarBase64,
+  //   //     previewBase64: props.avatar.previewBase64,
+  //   //     avatarId: props.avatar.Id,
+  //   //   };
+  //   // }
+  //   return null;
+  // }
+
+  componentDidUpdate() {
+    if (this.props.triggerRequired) {
+      this.uploadAvatar();
+    }
   }
 
-  handleProps = () => {
-    if (this.props.avatar) {
-      this.setState({
-        selectedAvatar: this.props.avatar.image,
-        preview: this.props.avatar.preview,
-        title: this.props.avatar.title,
-      });
+  async componentDidMount() {
+    ReactModal.setAppElement("#modal-man");
+
+    const { currentUser } = this.context;
+    console.log(currentUser);
+
+    if (currentUser.applicationUserId) {
+      await ImageService.getAvatar(currentUser.applicationUserId).then(
+        (response) => {
+          console.log("IMAGE SERVICE");
+          const avatar = response.data;
+          console.log(avatar);
+          if (avatar && avatar.id) {
+            this.setState({
+              avatarId: avatar.id,
+              avatarBase64: avatar.avatarBase64,
+              previewBase64: avatar.previewBase64,
+              title: avatar.title,
+            });
+          }
+        }
+      );
     }
-  };
+  }
 
   onClose = () => {
-    this.setState({ preview: null });
+    this.setState({
+      previewBase64: null,
+      title: null,
+      avatarImage: null,
+      avatarBase64: null,
+    });
   };
 
-  onCrop = (preview) => {
-    this.setState({ preview });
+  onCrop = (previewBase64) => {
+    this.setState({ previewBase64 });
   };
 
   onBeforeFileLoad = (event) => {
@@ -55,8 +98,8 @@ class AvatarUpload extends React.Component {
     } else {
       ImageService.getBase64FromFile(event.target.files[0], function (result) {
         self.setState({
-          selectedAvatar: event.target.files[0],
-          selectedAvatarBase64: result,
+          avatarImage: event.target.files[0],
+          avatarBase64: result,
         });
       });
     }
@@ -78,28 +121,44 @@ class AvatarUpload extends React.Component {
     }));
   };
 
-  onChangeHandler = (event) => {
-    this.setState({
-      selectedAvatar: event.target.files[0],
-      loaded: 0,
-    });
-    console.log(event.target.files.length);
-    if (event.target.files.length > 0) this.handleModal();
-  };
+  uploadAvatar = () => {
+    const state = this.state;
+    let userId = "";
 
-  importImage = () => {
-    this.inputElement.click();
+    if (!this.props.triggerRequired) {
+      const { currentUser } = this.context;
+      userId = currentUser.applicationUserId;
+    } else {
+      userId = this.props.userId;
+    }
+
+    const avatar = {
+      avatarImage: state.avatarImage,
+      avatarBase64: state.avatarBase64,
+      previewBase64: state.previewBase64,
+      title: state.title,
+    };
+
+    if (userId && avatar.previewBase64) {
+      ImageService.uploadAvatar(avatar, userId);
+    }
   };
 
   handleAvatarSubmit = () => {
     const state = this.state;
-    if (state.selectedAvatar) {
+    this.setState({ showModal: false });
+
+    if (!this.props.triggerRequired) this.uploadAvatar();
+    else {
+    }
+
+    if (state.avatarImage) {
       this.setState({ showModal: false });
 
       this.props.onAvatarSelect({
-        avatar: state.selectedAvatar,
-        avatarBase64: state.selectedAvatarBase64,
-        previewBase64: state.preview,
+        avatarImage: state.avatarImage,
+        avatarBase64: state.avatarBase64,
+        previewBase64: state.previewBase64,
         title: state.title,
       });
     } else {
@@ -126,7 +185,9 @@ class AvatarUpload extends React.Component {
         <div className="avatar-wrapper">
           <img
             className="profile-pic"
-            src={this.state.preview ? this.state.preview : avatarPic}
+            src={
+              this.state.previewBase64 ? this.state.previewBase64 : avatarPic
+            }
             alt=""
           />
           <div
@@ -135,13 +196,6 @@ class AvatarUpload extends React.Component {
           >
             <FontAwesomeIcon icon={faArrowCircleUp} aria-hidden="true" />
           </div>
-          {/* <input
-            ref={(input) => (this.inputElement = input)}
-            className="file-upload"
-            type="file"
-            accept="image/*"
-            onChange={this.onChangeHandler}
-          /> */}
         </div>
         <div id="modal-man"></div>
 
@@ -167,7 +221,7 @@ class AvatarUpload extends React.Component {
               <div className="card card-form">
                 <div className="container d-flex justify-content-center align-items-center">
                   <Avatar
-                    src={this.state.selectedAvatarBase64}
+                    src={this.state.newAvatar}
                     width={200}
                     height={200}
                     onCrop={this.onCrop}
@@ -195,6 +249,7 @@ class AvatarUpload extends React.Component {
                       name="title"
                       className="form-control elevator"
                       onChange={this.handleInputChange}
+                      value={this.state.title}
                     ></textarea>
                   </div>
                   <div className="form-group" align="right">

@@ -14,6 +14,7 @@ namespace Flambee.Core
     public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly ApplicationDbContext _context;
+        private DbSet<TEntity> _entities;
 
         public EntityRepository(ApplicationDbContext context)
         {
@@ -141,5 +142,30 @@ namespace Flambee.Core
                        .Select(e => (object)e)
                        .ToListAsync();
         }
+
+        /// <summary>
+        /// Gets a table
+        /// </summary>
+        public virtual IQueryable<TEntity> Table => Entities;
+
+        /// <summary>
+        /// Gets a table with "no tracking" enabled (EF feature) Use it only when you load record(s) only for read-only operations
+        /// </summary>
+        public virtual IQueryable<TEntity> TableNoTracking => Entities.AsNoTracking();
+
+        /// <summary>
+        /// Gets an entity set
+        /// </summary>
+        protected virtual DbSet<TEntity> Entities
+        {
+            get
+            {
+                if (_entities == null)
+                    _entities = _context.Set<TEntity>();
+
+                return _entities;
+            }
+        }
+
     }
 }

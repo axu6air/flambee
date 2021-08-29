@@ -9,6 +9,7 @@ using System.Linq;
 using System.Drawing;
 using System.Threading.Tasks;
 using Flambee.Core.Configuration.Image;
+using Microsoft.EntityFrameworkCore;
 
 namespace Flambee.Service.AppServiceProviders.Image
 {
@@ -42,25 +43,25 @@ namespace Flambee.Service.AppServiceProviders.Image
             return path;
         }
 
-        public string GetAvatarPath(string filename)
+        public string GetAvatarPath(string imageName)
         {
             var path = CheckImagePath(ImagePath.AvatarPath);
-            return path + filename;
+            return path + imageName;
         }
 
-        public string GetPostImagePath(string filename)
+        public string GetPostImagePath(string imageName)
         {
             var path = CheckImagePath(ImagePath.PostImagePath);
-            return path + filename;
+            return path + imageName;
         }
 
-        public string GetUniqueFileName(string fileName)
+        public string GetUniqueImageName(string imageName)
         {
-            fileName = Path.GetFileName(fileName);
-            return Path.GetFileNameWithoutExtension(fileName)
+            imageName = Path.GetFileName(imageName);
+            return Path.GetFileNameWithoutExtension(imageName)
                       + "_"
                       + Guid.NewGuid().ToString().Substring(0, 4)
-                      + Path.GetExtension(fileName);
+                      + Path.GetExtension(imageName);
         }
 
         public bool UploadImage(IFormFile image, string filePath)
@@ -76,6 +77,18 @@ namespace Flambee.Service.AppServiceProviders.Image
             }
         }
 
-        
+        public async Task<Avatar> GetAvatar(Guid userId)
+        {
+            var avatar = await (from av in _avatarRepository.Table
+                          where userId.Equals(av.UserId)
+                          orderby av.Id descending
+                          select av
+                          ).FirstOrDefaultAsync();
+
+            return avatar != null && !avatar.IsDeleted ? avatar : null;
+
+        }
+
+
     }
 }

@@ -16,6 +16,7 @@ import AuthVerify from "./auth/AuthVerify";
 import EventBus from "../common/EventBus";
 import AuthService from "../service/Auth";
 import ErrorHandler from "./helper/ErrorHandler";
+import ProfileUpdate from "./profile/ProfileUpdate";
 
 const App = () => {
   useEffect(() => {
@@ -67,6 +68,9 @@ const App = () => {
               </Route>
               <Route exact path="/ResetPasswordRequest">
                 <ResetPasswordRequest />
+              </Route>
+              <Route exact path="/ProfileUpdate">
+                <ProfileUpdate />
               </Route>
               <Route exact path="/ResetPassword">
                 <ResetPassword />

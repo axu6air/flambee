@@ -17,20 +17,22 @@ class Notify {
   };
 
   handleNotification = (response) => {
-    const self = this;
-    const statusCode = response.status;
-    console.log(response);
+    if (response) {
+      const self = this;
+      const statusCode = response.status;
+      console.log(response);
 
-    try {
-      if (statusCode === 200 && response.data.message) {
-        self.success(response.data.message);
-      } else {
-        if (response.data && response.data.errors) {
-          self.error(response.data.errors);
+      try {
+        if (statusCode === 200 && response.data.message) {
+          self.success(response.data.message);
+        } else {
+          if (response.data && response.data.errors) {
+            self.error(response.data.errors);
+          }
         }
+      } catch (err) {
+        self.error("Error occured");
       }
-    } catch (err) {
-      self.error("Error occured");
     }
   };
 }

@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import { Redirect, Link } from "react-router-dom";
-import Username from "./Username";
+import Username from "../auth/Username";
 import { isEmailValid } from "../helper/HelperFunstions";
 import { FaUserAlt, FaKey } from "react-icons/fa";
 import { FiMail, FiPhone } from "react-icons/fi";
@@ -11,8 +11,11 @@ import AuthService from "../../service/Auth";
 import AvatarUpload from "../avatar/AvatarUpload";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { AuthContext } from "../auth/AuthContext";
 
-class Signup extends Component {
+class ProfileUpdate extends Component {
+  static contextType = AuthContext;
+
   state = {
     user: {
       firstName: "",
@@ -22,12 +25,6 @@ class Signup extends Component {
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-      avatarUploadModel: {
-        avatar: null,
-        avatarBase64: null,
-        previewBase64: null,
-        title: "",
-      },
     },
     isFormValid: false,
     loading: false,
@@ -43,13 +40,10 @@ class Signup extends Component {
       confirmPassword: "",
     },
     avatar: {
-      avatarImage: null,
       avatarBase64: null,
       previewBase64: null,
       title: "",
     },
-    triggerAvatarUpload: false,
-    userId: null,
     avatarForm: null,
     responseSucceeded: false,
     regexFields: {
@@ -57,149 +51,7 @@ class Signup extends Component {
     },
   };
 
-  componentDidMount() {
-    axios.get("/GetFormRules").then((response) => {
-      if (response && response.data) {
-        const usernameRegex = response.data.username;
-        this.setState((prevState) => ({
-          regexFields: {
-            ...prevState.regexFields,
-            username: usernameRegex,
-          },
-        }));
-      }
-    });
-  }
-
-  handleInputChange = (event) => {
-    const target = event.target;
-    const value = target.type === "checkbox" ? target.checked : target.value;
-    const name = target.name;
-
-    this.setState((prevState) => ({
-      user: {
-        ...prevState.user,
-        [name]: value,
-      },
-      error: {
-        ...prevState.error,
-        [name]: "",
-      },
-    }));
-  };
-
-  handleUsernameChange = (username) => {
-    console.log("Sign up username", username);
-
-    this.setState((prevState) => ({
-      user: {
-        ...prevState.user,
-        username,
-      },
-    }));
-  };
-
-  handleUsernameValidity = (isValid) => {
-    console.log("isUsernameValid", isValid);
-    this.setState({ isUsernameValid: isValid });
-  };
-
-  sendSignupRequest = async () => {
-    this.setState({ loading: true });
-    const state = this.state;
-
-    await AuthService.signup(state.user)
-      .then((response) => {
-        if (response.status === 200 && response.data.userId) {
-          if (state.avatar.avatarBase64) {
-            const avatarForm = this.prepareAvatarForm(
-              state.avatar,
-              response.data.userId
-            );
-
-            this.setState({
-              triggerAvatarUpload: true,
-              userId: response.data.userId,
-            });
-            //this.sendAvatarUploadRequest(avatarForm);
-          }
-
-          this.setState({ responseSucceeded: true });
-        } else {
-          this.setState({ responseSucceeded: false });
-        }
-      })
-      .catch((error) => {
-        this.setState({ responseSucceeded: false });
-      })
-      .then(() => this.setState({ loading: false }));
-  };
-
-  sendAvatarUploadRequest = async (avatarForm) => {
-    try {
-      await axios.post("/UploadAvatar", avatarForm, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-    } catch (error) {
-      toast.error("Could not upload avatar");
-    }
-  };
-
-  validateForm = () => {
-    const self = this;
-    const state = self.state;
-    let errorCount = 0;
-    let error = {};
-
-    if (!state.user.firstName) {
-      errorCount++;
-      error.firstName = "first name is required";
-    }
-
-    if (!state.user.lastName) {
-      errorCount++;
-      error.lastName = "last name is required";
-    }
-
-    if (!state.user.email) {
-      errorCount++;
-      error.email = "email is required";
-    } else if (!isEmailValid(state.user.email)) {
-      errorCount++;
-      error.email = "invalid email";
-    }
-
-    if (!state.user.username) {
-      errorCount++;
-      error.username = "username is required";
-    }
-
-    if (!state.user.phoneNumber) {
-      errorCount++;
-      error.phoneNumber = "phone number is required";
-    }
-
-    if (!state.isUsernameValid) {
-      errorCount++;
-      error.username = "username is not valid or already taken";
-    }
-
-    if (state.user.password.length < 6) {
-      errorCount++;
-      error.password = "password requires at least 6 characters";
-    }
-
-    if (state.user.password !== state.user.confirmPassword) {
-      errorCount++;
-      error.confirmPassword = "passwords do not match";
-    }
-
-    self.setState({
-      isFormValid: errorCount === 0 ? true : false,
-      error: error,
-    });
-    return errorCount === 0 ? true : false;
-  };
+  componentDidMount() {}
 
   handleAvatar = (avatar) => {
     if (avatar) {
@@ -215,28 +67,23 @@ class Signup extends Component {
     }
   };
 
-  prepareAvatarForm = (avatar, userId) => {
-    let avatarForm = new FormData();
-
-    avatarForm.append("avatarImage", avatar.avatarImage);
-    avatarForm.append("avatarBase64", avatar.avatarBase64);
-    avatarForm.append("previewBase64", avatar.previewBase64);
-    avatarForm.append("title", avatar.title);
-    avatarForm.append("userId", userId);
-
-    return avatarForm;
-  };
-
-  handleSubmit = (event) => {
-    event.preventDefault();
-
-    const isFormValid = this.validateForm();
-
-    if (isFormValid) {
-      this.sendSignupRequest();
-    } else {
-      console.log(this.state.error);
-    }
+  getAvatar = () => {
+    const { currentUser } = this.context;
+    console.log(currentUser);
+    axios
+      .get(`/GetAvatar?userId=${currentUser.applicationUserId}`)
+      .then((response) => {
+        console.log(response.data);
+        const avatar = response.data;
+        this.setState({
+          avatar: {
+            ...this.state.avatar,
+            avatarBase64: avatar.avatarBase64,
+            previewBase64: avatar.previewBase64,
+            title: avatar.title,
+          },
+        });
+      });
   };
 
   render() {
@@ -252,24 +99,20 @@ class Signup extends Component {
             <div className="card-container">
               <div className="container d-flex justify-content-center align-items-center">
                 <div className="card card-form">
-                  <div className="card-header">
-                    <h3>Signup</h3>
+                  <div>
+                    <AvatarUpload
+                      avatar={this.state.avatar}
+                      onAvatarSelect={this.handleAvatar}
+                    />
                   </div>
+                </div>
+                <div className="card card-form">
                   <div className="card-body">
                     <form
                       onSubmit={(event) => {
                         this.handleSubmit(event);
                       }}
                     >
-                      <div>
-                        <AvatarUpload
-                          avatar={this.state.avatar}
-                          onAvatarSelect={this.handleAvatar}
-                          triggerUpload={this.state.triggerAvatarUpload}
-                          triggerRequired={true}
-                          userId={this.state.userId}
-                        />
-                      </div>
                       <div className="input-group form-group">
                         <div className="input-group-prepend">
                           <span className="input-group-text">
@@ -437,4 +280,4 @@ class Signup extends Component {
   }
 }
 
-export default Signup;
+export default ProfileUpdate;

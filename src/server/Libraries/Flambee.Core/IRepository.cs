@@ -27,5 +27,8 @@ namespace Flambee.Core
         Task<int> DeleteAsync(Expression<Func<TEntity, bool>> predicate);
         Task<IList<TEntity>> ExecuteStoredProcedureAsync(string procedureName, params object[] parameters);
         Task<List<object>> ExecuteProcedureObjectAsync(string procedureName, params object[] parameters);
+
+        IQueryable<TEntity> Table { get; }
+        IQueryable<TEntity> TableNoTracking { get; }
     }
 }
