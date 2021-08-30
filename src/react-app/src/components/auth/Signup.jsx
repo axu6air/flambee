@@ -13,6 +13,11 @@ import axios from "axios";
 import { toast } from "react-toastify";
 
 class Signup extends Component {
+  constructor(props) {
+    super(props);
+    this.childRef = React.createRef();
+  }
+
   state = {
     user: {
       firstName: "",
@@ -111,26 +116,13 @@ class Signup extends Component {
     await AuthService.signup(state.user)
       .then((response) => {
         if (response.status === 200 && response.data.userId) {
-          if (state.avatar.avatarBase64) {
-            const avatarForm = this.prepareAvatarForm(
-              state.avatar,
-              response.data.userId
-            );
-
-            this.setState({
-              triggerAvatarUpload: true,
-              userId: response.data.userId,
-            });
-            //this.sendAvatarUploadRequest(avatarForm);
-          }
+          this.setState({
+            triggerAvatarUpload: true,
+            userId: response.data.userId,
+          });
 
           this.setState({ responseSucceeded: true });
-        } else {
-          this.setState({ responseSucceeded: false });
         }
-      })
-      .catch((error) => {
-        this.setState({ responseSucceeded: false });
       })
       .then(() => this.setState({ loading: false }));
   };
@@ -263,8 +255,8 @@ class Signup extends Component {
                     >
                       <div>
                         <AvatarUpload
-                          avatar={this.state.avatar}
-                          onAvatarSelect={this.handleAvatar}
+                          // avatar={this.state.avatar}
+                          // onAvatarSelect={this.handleAvatar}
                           triggerUpload={this.state.triggerAvatarUpload}
                           triggerRequired={true}
                           userId={this.state.userId}

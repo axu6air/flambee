@@ -49,44 +49,16 @@ class ProfileUpdate extends Component {
     regexFields: {
       username: "",
     },
+    userId: null,
   };
 
-  componentDidMount() {}
-
-  handleAvatar = (avatar) => {
-    if (avatar) {
-      this.setState({
-        avatar: {
-          ...this.state.avatar,
-          avatarImage: avatar.avatarImage,
-          avatarBase64: avatar.avatarBase64,
-          previewBase64: avatar.previewBase64,
-          title: avatar.title,
-        },
-      });
-    }
-  };
-
-  getAvatar = () => {
-    const { currentUser } = this.context;
-    console.log(currentUser);
-    axios
-      .get(`/GetAvatar?userId=${currentUser.applicationUserId}`)
-      .then((response) => {
-        console.log(response.data);
-        const avatar = response.data;
-        this.setState({
-          avatar: {
-            ...this.state.avatar,
-            avatarBase64: avatar.avatarBase64,
-            previewBase64: avatar.previewBase64,
-            title: avatar.title,
-          },
-        });
-      });
-  };
+  componentDidMount() {
+    console.log("Profile Update componentDidMount");
+  }
 
   render() {
+    const { currentUser } = this.context;
+
     if (this.state.responseSucceeded) {
       return <Redirect to="/Login" />;
     }
@@ -101,8 +73,10 @@ class ProfileUpdate extends Component {
                 <div className="card card-form">
                   <div>
                     <AvatarUpload
-                      avatar={this.state.avatar}
-                      onAvatarSelect={this.handleAvatar}
+                      // avatar={this.state.avatar}
+                      // onAvatarSelect={this.handleAvatar}
+                      triggerRequired={false}
+                      userId={currentUser.applicationUserId}
                     />
                   </div>
                 </div>
@@ -153,7 +127,7 @@ class ProfileUpdate extends Component {
                           {this.state.error.lastName}
                         </div>
                       )}
-                      <div className="input-group form-group">
+                      {/* <div className="input-group form-group">
                         <div className="input-group-prepend">
                           <span className="input-group-text">
                             <FaUserAlt />
@@ -170,7 +144,7 @@ class ProfileUpdate extends Component {
                             usernameRegex={this.state.regexFields.username}
                           />
                         </div>
-                      </div>
+                      </div> */}
                       {this.state.error.username && (
                         <div className="error-message">
                           {this.state.error.username}

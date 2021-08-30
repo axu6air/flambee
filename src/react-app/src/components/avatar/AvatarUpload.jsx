@@ -11,69 +11,51 @@ import {
 import "../../assets/css/avatar-upload.css";
 import ReactModal from "react-modal";
 import { toast } from "react-toastify";
-import { AuthContext } from "../auth/AuthContext";
+// import { AuthContext } from "../auth/AuthContext";
 
 class AvatarUpload extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      avatarId: 0,
-      avatarImage: null,
-      avatarBase64: "",
-      previewBase64: null,
-      newAvatar: null,
-      showModal: false,
-      title: "",
-      loaded: 0,
-    };
-  }
+  state = {
+    avatarId: 0,
+    avatarImage: null,
+    avatarBase64: "",
+    previewBase64: null,
+    newAvatar: null,
+    showModal: false,
+    title: "",
+    loaded: 0,
+  };
 
-  static contextType = AuthContext;
-
-  // static getDerivedStateFromProps(props, state) {
-  //   if (props.triggerRequired && props.triggerUpload) {
-  //     this.uploadAvatar();
-  //   }
-
-  //   // if (props.avatar && props.avatar.previewBase64 !== state.previewBase64) {
-  //   //   console.log(props.avatar);
-  //   //   return {
-  //   //     avatarBase64: props.avatar.avatarBase64,
-  //   //     previewBase64: props.avatar.previewBase64,
-  //   //     avatarId: props.avatar.Id,
-  //   //   };
-  //   // }
-  //   return null;
-  // }
+  // static contextType = AuthContext;
 
   componentDidUpdate() {
-    if (this.props.triggerRequired) {
+    if (
+      this.props.triggerRequired &&
+      this.props.triggerUpload &&
+      this.props.userId
+    ) {
       this.uploadAvatar();
     }
   }
 
   async componentDidMount() {
+    console.log("Avatar Upload componentDidMount");
+
     ReactModal.setAppElement("#modal-man");
 
-    const { currentUser } = this.context;
-    console.log(currentUser);
-
-    if (currentUser.applicationUserId) {
-      await ImageService.getAvatar(currentUser.applicationUserId).then(
-        (response) => {
-          console.log("IMAGE SERVICE");
-          const avatar = response.data;
-          console.log(avatar);
-          if (avatar && avatar.id) {
-            this.setState({
-              avatarId: avatar.id,
-              avatarBase64: avatar.avatarBase64,
-              previewBase64: avatar.previewBase64,
-              title: avatar.title,
-            });
-          }
+    if (this.props.userId) {
+      await ImageService.getAvatar(this.props.userId).then((response) => {
+        console.log("IMAGE SERVICE");
+        const avatar = response.data;
+        console.log(avatar);
+        if (avatar && avatar.id) {
+          this.setState({
+            avatarId: avatar.id,
+            avatarBase64: avatar.avatarBase64,
+            previewBase64: avatar.previewBase64,
+            title: avatar.title,
+          });
         }
-      );
+      });
     }
   }
 
@@ -123,14 +105,6 @@ class AvatarUpload extends React.Component {
 
   uploadAvatar = () => {
     const state = this.state;
-    let userId = "";
-
-    if (!this.props.triggerRequired) {
-      const { currentUser } = this.context;
-      userId = currentUser.applicationUserId;
-    } else {
-      userId = this.props.userId;
-    }
 
     const avatar = {
       avatarImage: state.avatarImage,
@@ -139,8 +113,8 @@ class AvatarUpload extends React.Component {
       title: state.title,
     };
 
-    if (userId && avatar.previewBase64) {
-      ImageService.uploadAvatar(avatar, userId);
+    if (this.props.userId && avatar.previewBase64) {
+      ImageService.uploadAvatar(avatar, this.props.userId);
     }
   };
 
@@ -148,19 +122,19 @@ class AvatarUpload extends React.Component {
     const state = this.state;
     this.setState({ showModal: false });
 
-    if (!this.props.triggerRequired) this.uploadAvatar();
+    if (!this.props.triggerRequired && state.avatarImage) this.uploadAvatar();
     else {
     }
 
     if (state.avatarImage) {
       this.setState({ showModal: false });
 
-      this.props.onAvatarSelect({
-        avatarImage: state.avatarImage,
-        avatarBase64: state.avatarBase64,
-        previewBase64: state.previewBase64,
-        title: state.title,
-      });
+      // this.props.onAvatarSelect({
+      //   avatarImage: state.avatarImage,
+      //   avatarBase64: state.avatarBase64,
+      //   previewBase64: state.previewBase64,
+      //   title: state.title,
+      // });
     } else {
       toast.error("Please select your avatar");
     }
