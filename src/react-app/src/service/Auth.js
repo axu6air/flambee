@@ -18,7 +18,10 @@ class AuthService {
     localStorage.bearerToken = "";
     localStorage.currentUser = null;
     axios.post("/Logout").then((response) => {
-      if (response.status === 200) return true;
+      if (response.status === 200) {
+        window.location.reload();
+        return true;
+      }
     });
 
     return false;

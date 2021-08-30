@@ -38,15 +38,12 @@ class AvatarUpload extends React.Component {
   }
 
   async componentDidMount() {
-    console.log("Avatar Upload componentDidMount");
-
     ReactModal.setAppElement("#modal-man");
 
     if (this.props.userId) {
       await ImageService.getAvatar(this.props.userId).then((response) => {
-        console.log("IMAGE SERVICE");
         const avatar = response.data;
-        console.log(avatar);
+
         if (avatar && avatar.id) {
           this.setState({
             avatarId: avatar.id,

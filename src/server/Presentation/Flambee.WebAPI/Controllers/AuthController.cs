@@ -34,14 +34,14 @@ namespace Flambee.WebAPI.Controllers
         private readonly IAuthService _authService;
         private readonly IConfiguration _configuration;
         private readonly IAuthFactory _authFactory;
-        private readonly IUserInfoService _userDetailsService;
+        private readonly IUserService _userDetailsService;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
 
         public AuthController(IAuthService authService,
             IConfiguration configuration,
             IAuthFactory authFactory,
-            IUserInfoService userDetailsService,
+            IUserService userDetailsService,
             IEmailService emailService,
             IMapper mapper)
         {

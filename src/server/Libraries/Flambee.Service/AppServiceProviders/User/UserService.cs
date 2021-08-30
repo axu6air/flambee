@@ -12,13 +12,13 @@ using System.Threading.Tasks;
 
 namespace Flambee.Service.AppServiceProviders.User
 {
-    public class UserInfoService : IUserInfoService
+    public class UserService : IUserService
     {
         private readonly IRepository<UserInfo> _userInfoRepository;
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserInfoService(IRepository<UserInfo> userInfoRepository,
+        public UserService(IRepository<UserInfo> userInfoRepository,
             UserManager<ApplicationUser> userManager,
             IHttpContextAccessor httpContextAccessor)
         {

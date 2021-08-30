@@ -22,7 +22,7 @@ namespace Flambee.WebAPI.Controllers
         private async Task<UserInfoModel> GetUserInfo()
         {
             var mapper = HttpContext.RequestServices.GetService<IMapper>();
-            var userDetailsService = HttpContext.RequestServices.GetService<IUserInfoService>();
+            var userDetailsService = HttpContext.RequestServices.GetService<IUserService>();
             var token = await HttpContext.GetTokenAsync("access_token");
             var user = await userDetailsService.GetLoggedInApplicationUserAsync();
             if (user == null)

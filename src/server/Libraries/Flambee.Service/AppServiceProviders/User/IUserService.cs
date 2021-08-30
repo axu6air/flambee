@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Flambee.Service.AppServiceProviders.User
 {
-    public interface IUserInfoService
+    public interface IUserService
     {
         Task<UserInfo> GetUserInfoById(int id);
         Task<UserInfo> GetUserInfoById(Guid id);

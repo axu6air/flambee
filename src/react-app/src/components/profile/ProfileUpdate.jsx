@@ -1,12 +1,12 @@
 import React, { Component } from "react";
 import { Link } from "react-router-dom";
 import { isEmailValid } from "../helper/HelperFunstions";
-import { FaKey } from "react-icons/fa";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { WiMoonAltFirstQuarter, WiMoonAltThirdQuarter } from "react-icons/wi";
 import Loader from "../helper/Loader";
 import AvatarUpload from "../avatar/AvatarUpload";
 import { AuthContext } from "../auth/AuthContext";
+import UserService from "../../service/UserService";
 import "../../assets/css/authentication.css";
 
 class ProfileUpdate extends Component {
@@ -14,12 +14,10 @@ class ProfileUpdate extends Component {
 
   state = {
     user: {
-      firstName: "",
-      lastName: "",
+      firstName: "A",
+      lastName: "B",
       email: "",
       phoneNumber: "",
-      password: "",
-      confirmPassword: "",
     },
     isFormValid: false,
     loading: false,
@@ -34,8 +32,31 @@ class ProfileUpdate extends Component {
     userId: null,
   };
 
+  getUserData = () => {
+    const { currentUser } = this.context;
+    this.setState({ loading: true });
+
+    UserService.getUserProfileData(currentUser.applicationUserId)
+      .then((response) => {
+        const userData = response.data;
+
+        this.setState({ user: userData });
+
+        // this.setState((prevState) => ({
+        //   user: {
+        //     ...prevState.user,
+        //     firstName: userData.firstName,
+        //     lastName: userData.lastName,
+        //     email: userData.email,
+        //     phoneNumber: userData.phoneNumber,
+        //   },
+        // }));
+      })
+      .then(() => this.setState({ loading: false }));
+  };
+
   componentDidMount() {
-    console.log("Profile Update componentDidMount");
+    this.getUserData();
   }
 
   validateForm = () => {
@@ -67,16 +88,6 @@ class ProfileUpdate extends Component {
       error.phoneNumber = "phone number is required";
     }
 
-    if (state.user.password.length < 6) {
-      errorCount++;
-      error.password = "password requires at least 6 characters";
-    }
-
-    if (state.user.password !== state.user.confirmPassword) {
-      errorCount++;
-      error.confirmPassword = "passwords do not match";
-    }
-
     self.setState({
       isFormValid: errorCount === 0 ? true : false,
       error: error,
@@ -89,6 +100,7 @@ class ProfileUpdate extends Component {
 
     return (
       <>
+        console.log(this.state.user);
         {this.state.loading && <Loader />}
         <section>
           <div className="home-main">
@@ -121,9 +133,11 @@ class ProfileUpdate extends Component {
                           className="form-control"
                           placeholder="first name"
                           autoComplete="firstName"
+                          value={this.state.firstName}
                           onChange={this.handleInputChange}
                         />
                       </div>
+                      <div>{this.state.firstName}</div>
                       {this.state.error.firstName && (
                         <div className="error-message">
                           {this.state.error.firstName}
@@ -142,6 +156,7 @@ class ProfileUpdate extends Component {
                           placeholder="last name"
                           autoComplete="lastName"
                           onChange={this.handleInputChange}
+                          value={this.state.lastName}
                         />
                       </div>
                       {this.state.error.lastName && (
@@ -162,6 +177,7 @@ class ProfileUpdate extends Component {
                           placeholder="email"
                           autoComplete="emailAddress"
                           onChange={this.handleInputChange}
+                          value={this.state.email}
                         />
                       </div>
                       {this.state.error.email && (
@@ -182,51 +198,12 @@ class ProfileUpdate extends Component {
                           placeholder="phone number"
                           autoComplete="phoneNumber"
                           onChange={this.handleInputChange}
+                          value={this.state.phoneNumber}
                         />
                       </div>
                       {this.state.error.phoneNumber && (
                         <div className="error-message">
                           {this.state.error.phoneNumber}
-                        </div>
-                      )}
-                      <div className="input-group form-group">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text">
-                            <FaKey />
-                          </span>
-                        </div>
-                        <input
-                          type="password"
-                          name="password"
-                          className="form-control"
-                          placeholder="password"
-                          autoComplete="passwordAuto"
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                      {this.state.error.password && (
-                        <div className="error-message">
-                          {this.state.error.password}
-                        </div>
-                      )}
-                      <div className="input-group form-group">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text">
-                            <FaKey />
-                          </span>
-                        </div>
-                        <input
-                          type="password"
-                          name="confirmPassword"
-                          className="form-control"
-                          placeholder="confirm password"
-                          autoComplete="confirmPassword"
-                          onChange={this.handleInputChange}
-                        />
-                      </div>
-                      {this.state.error.confirmPassword && (
-                        <div className="error-message">
-                          {this.state.error.confirmPassword}
                         </div>
                       )}
                       <div className="form-group" align="right">

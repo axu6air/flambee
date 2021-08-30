@@ -23,14 +23,14 @@ namespace Flambee.WebAPI.Controllers
         };
 
         private readonly IAuthService _authService;
-        private readonly IUserInfoService _userDetailsService;
+        private readonly IUserService _userDetailsService;
         private readonly ILogger<WeatherForecastController> _logger;
         private readonly IMapper _mapper;
 
 
         public WeatherForecastController(ILogger<WeatherForecastController> logger,
             IAuthService authService,
-            IUserInfoService userDetailsService,
+            IUserService userDetailsService,
             IMapper mapper)
         {
             _logger = logger;

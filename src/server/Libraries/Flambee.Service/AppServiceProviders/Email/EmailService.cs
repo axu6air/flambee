@@ -19,10 +19,10 @@ namespace Flambee.Service.AppServiceProviders.Email
     public class EmailService : IEmailService
     {
         private readonly IConfiguration _configuration;
-        private readonly IUserInfoService _userDetailsService;
+        private readonly IUserService _userDetailsService;
 
         public EmailService(IConfiguration configuration,
-            IUserInfoService userDetailsService)
+            IUserService userDetailsService)
         {
             _configuration = configuration;
             _userDetailsService = userDetailsService;

@@ -6,6 +6,8 @@ using Flambee.WebAPI.Factories.Auth;
 using Microsoft.Extensions.DependencyInjection;
 using Flambee.Service.AppServiceProviders.Image;
 using Flambee.WebAPI.Factories.Image;
+using Microsoft.AspNetCore.Http;
+using Flambee.WebAPI.Factories.User;
 
 namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
 {
@@ -13,13 +15,17 @@ namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
     {
         public static void RegisterDependencyInjection(this IServiceCollection service)
         {
+            service.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             service.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));
+
+            service.AddTransient<IUserService, UserService>();
             service.AddScoped<IAuthService, AuthService>();
-            service.AddTransient<IUserInfoService, UserInfoService>();
-            service.AddScoped<IAuthFactory, AuthFactory>();
             service.AddScoped<IEmailService, EmailService>();
             service.AddScoped<IImageService, ImageService>();
+
+            service.AddScoped<IAuthFactory, AuthFactory>();
             service.AddScoped<IImageFactory, ImageFactory>();
+            service.AddScoped<IUserFactory,  UserFactory>();
         }
     }
 }

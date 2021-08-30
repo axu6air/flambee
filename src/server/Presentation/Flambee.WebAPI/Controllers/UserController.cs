@@ -1,4 +1,5 @@
 ﻿using Flambee.Service.AppServiceProviders.User;
+using Flambee.WebAPI.Factories.User;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -12,11 +13,13 @@ namespace Flambee.WebAPI.Controllers
     [ApiController]
     public class UserController : BaseController
     {
-        private readonly IUserInfoService _userService;
+        private readonly IUserService _userService;
+        private readonly IUserFactory _userFactory;
 
-        public UserController(IUserInfoService userService)
+        public UserController(IUserService userService, IUserFactory userFactory)
         {
             _userService = userService;
+            _userFactory = userFactory;
         }
 
         [HttpGet]
@@ -28,8 +31,10 @@ namespace Flambee.WebAPI.Controllers
         [HttpGet("{id}")]
         public async Task<IActionResult> Get(Guid id)
         {
-            var userInfo = await _userService.GetUserInfoById(id);
-            return Ok();
+            var user = await _userService.GetUserInfoById(id);
+            var model = _userFactory.PrepareUserProfileModel(user);
+
+            return Ok(model);
         }
 
     }

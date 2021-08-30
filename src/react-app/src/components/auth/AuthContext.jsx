@@ -21,9 +21,7 @@ export const AuthProvider = ({ children }) => {
 
     if (user) {
       const decodedJwt = parseJwt(token);
-      console.log("-----Auth CONTEXT Verify------");
-      console.log(decodedJwt.exp * 1000);
-      console.log(decodedJwt.exp * 1000 < Date.now());
+
       if (decodedJwt.exp * 1000 < Date.now()) {
         AuthService.logout();
       }
