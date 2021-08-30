@@ -22,6 +22,6 @@ namespace Flambee.Core.Domain.Image
         [ForeignKey("ApplicationUser")]
         public Guid UserId { get; set; }
 
-        public ApplicationUser ApplicationUser { get; set; }
+        public virtual ApplicationUser ApplicationUser { get; set; }
     }
 }
