@@ -1,17 +1,13 @@
 import React, { Component } from "react";
-import { Redirect, Link } from "react-router-dom";
-import Username from "../auth/Username";
+import { Link } from "react-router-dom";
 import { isEmailValid } from "../helper/HelperFunstions";
-import { FaUserAlt, FaKey } from "react-icons/fa";
+import { FaKey } from "react-icons/fa";
 import { FiMail, FiPhone } from "react-icons/fi";
 import { WiMoonAltFirstQuarter, WiMoonAltThirdQuarter } from "react-icons/wi";
-import "../../assets/css/authentication.css";
 import Loader from "../helper/Loader";
-import AuthService from "../../service/Auth";
 import AvatarUpload from "../avatar/AvatarUpload";
-import axios from "axios";
-import { toast } from "react-toastify";
 import { AuthContext } from "../auth/AuthContext";
+import "../../assets/css/authentication.css";
 
 class ProfileUpdate extends Component {
   static contextType = AuthContext;
@@ -20,7 +16,6 @@ class ProfileUpdate extends Component {
     user: {
       firstName: "",
       lastName: "",
-      username: "",
       email: "",
       phoneNumber: "",
       password: "",
@@ -28,26 +23,13 @@ class ProfileUpdate extends Component {
     },
     isFormValid: false,
     loading: false,
-    isUsernameValid: false,
-    isUsernameLoading: false,
     error: {
       firstName: "",
       lastName: "",
-      username: "",
       email: "",
       phoneNumber: "",
       password: "",
       confirmPassword: "",
-    },
-    avatar: {
-      avatarBase64: null,
-      previewBase64: null,
-      title: "",
-    },
-    avatarForm: null,
-    responseSucceeded: false,
-    regexFields: {
-      username: "",
     },
     userId: null,
   };
@@ -56,12 +38,54 @@ class ProfileUpdate extends Component {
     console.log("Profile Update componentDidMount");
   }
 
+  validateForm = () => {
+    const self = this;
+    const state = self.state;
+    let errorCount = 0;
+    let error = {};
+
+    if (!state.user.firstName) {
+      errorCount++;
+      error.firstName = "first name is required";
+    }
+
+    if (!state.user.lastName) {
+      errorCount++;
+      error.lastName = "last name is required";
+    }
+
+    if (!state.user.email) {
+      errorCount++;
+      error.email = "email is required";
+    } else if (!isEmailValid(state.user.email)) {
+      errorCount++;
+      error.email = "invalid email";
+    }
+
+    if (!state.user.phoneNumber) {
+      errorCount++;
+      error.phoneNumber = "phone number is required";
+    }
+
+    if (state.user.password.length < 6) {
+      errorCount++;
+      error.password = "password requires at least 6 characters";
+    }
+
+    if (state.user.password !== state.user.confirmPassword) {
+      errorCount++;
+      error.confirmPassword = "passwords do not match";
+    }
+
+    self.setState({
+      isFormValid: errorCount === 0 ? true : false,
+      error: error,
+    });
+    return errorCount === 0 ? true : false;
+  };
+
   render() {
     const { currentUser } = this.context;
-
-    if (this.state.responseSucceeded) {
-      return <Redirect to="/Login" />;
-    }
 
     return (
       <>
@@ -73,8 +97,6 @@ class ProfileUpdate extends Component {
                 <div className="card card-form">
                   <div>
                     <AvatarUpload
-                      // avatar={this.state.avatar}
-                      // onAvatarSelect={this.handleAvatar}
                       triggerRequired={false}
                       userId={currentUser.applicationUserId}
                     />
@@ -125,29 +147,6 @@ class ProfileUpdate extends Component {
                       {this.state.error.lastName && (
                         <div className="error-message">
                           {this.state.error.lastName}
-                        </div>
-                      )}
-                      {/* <div className="input-group form-group">
-                        <div className="input-group-prepend">
-                          <span className="input-group-text">
-                            <FaUserAlt />
-                          </span>
-                        </div>
-                        <div className="text-container">
-                          <Username
-                            handleUsernameChange={(username) =>
-                              this.handleUsernameChange(username)
-                            }
-                            handleUsernameValidity={(valid) =>
-                              this.handleUsernameValidity(valid)
-                            }
-                            usernameRegex={this.state.regexFields.username}
-                          />
-                        </div>
-                      </div> */}
-                      {this.state.error.username && (
-                        <div className="error-message">
-                          {this.state.error.username}
                         </div>
                       )}
                       <div className="input-group form-group">
