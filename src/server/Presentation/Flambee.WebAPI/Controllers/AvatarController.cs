@@ -60,7 +60,7 @@ namespace Flambee.WebAPI.Controllers
             return BadRequest();
         }
 
-        [Authorize]
+        //[Authorize]
         [HttpGet]
         [Route("/GetAvatar")]
         public async Task<IActionResult> GetUserAvatar(Guid userId)

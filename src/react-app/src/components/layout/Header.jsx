@@ -43,6 +43,13 @@ const Header = (params) => {
               )}
               {currentUser && currentUser.username && (
                 <div className="dropdown-item">
+                  <Link className="fill" to="/ProfileUpdate">
+                    Update Profile
+                  </Link>
+                </div>
+              )}
+              {currentUser && currentUser.username && (
+                <div className="dropdown-item">
                   <Link className="fill" to="/Logout">
                     Logout
                   </Link>

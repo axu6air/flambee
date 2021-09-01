@@ -8,14 +8,16 @@ import AvatarUpload from "../avatar/AvatarUpload";
 import { AuthContext } from "../auth/AuthContext";
 import UserService from "../../service/UserService";
 import "../../assets/css/authentication.css";
+import axios from "axios";
+import { toast } from "react-toastify";
 
 class ProfileUpdate extends Component {
   static contextType = AuthContext;
 
   state = {
     user: {
-      firstName: "A",
-      lastName: "B",
+      firstName: "",
+      lastName: "",
       email: "",
       phoneNumber: "",
     },
@@ -39,18 +41,7 @@ class ProfileUpdate extends Component {
     UserService.getUserProfileData(currentUser.applicationUserId)
       .then((response) => {
         const userData = response.data;
-
         this.setState({ user: userData });
-
-        // this.setState((prevState) => ({
-        //   user: {
-        //     ...prevState.user,
-        //     firstName: userData.firstName,
-        //     lastName: userData.lastName,
-        //     email: userData.email,
-        //     phoneNumber: userData.phoneNumber,
-        //   },
-        // }));
       })
       .then(() => this.setState({ loading: false }));
   };
@@ -95,12 +86,59 @@ class ProfileUpdate extends Component {
     return errorCount === 0 ? true : false;
   };
 
+  handleInputChange = (event) => {
+    const target = event.target;
+    const value = target.type === "checkbox" ? target.checked : target.value;
+    const name = target.name;
+
+    this.setState((prevState) => ({
+      user: {
+        ...prevState.user,
+        [name]: value,
+      },
+      error: {
+        ...prevState.error,
+        [name]: "",
+      },
+    }));
+  };
+
+  prepareSubmitModel = () => {
+    const { currentUser } = this.context;
+
+    if (currentUser && currentUser.applicationUserId) {
+      const user = this.state.user;
+
+      return {
+        userId: currentUser.applicationUserId,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+      };
+    }
+
+    return null;
+  };
+
+  handleSubmit = (event) => {
+    event.preventDefault();
+    console.log(this.state.user);
+
+    const model = this.prepareSubmitModel();
+
+    axios.put("/User", model).then((response) => {
+      if (response && response.data) {
+        toast.success(response.data.message);
+      }
+    });
+  };
+
   render() {
     const { currentUser } = this.context;
 
     return (
       <>
-        console.log(this.state.user);
         {this.state.loading && <Loader />}
         <section>
           <div className="home-main">
@@ -133,11 +171,10 @@ class ProfileUpdate extends Component {
                           className="form-control"
                           placeholder="first name"
                           autoComplete="firstName"
-                          value={this.state.firstName}
+                          value={this.state.user.firstName}
                           onChange={this.handleInputChange}
                         />
                       </div>
-                      <div>{this.state.firstName}</div>
                       {this.state.error.firstName && (
                         <div className="error-message">
                           {this.state.error.firstName}
@@ -156,7 +193,7 @@ class ProfileUpdate extends Component {
                           placeholder="last name"
                           autoComplete="lastName"
                           onChange={this.handleInputChange}
-                          value={this.state.lastName}
+                          value={this.state.user.lastName}
                         />
                       </div>
                       {this.state.error.lastName && (
@@ -177,7 +214,7 @@ class ProfileUpdate extends Component {
                           placeholder="email"
                           autoComplete="emailAddress"
                           onChange={this.handleInputChange}
-                          value={this.state.email}
+                          value={this.state.user.email}
                         />
                       </div>
                       {this.state.error.email && (
@@ -198,7 +235,7 @@ class ProfileUpdate extends Component {
                           placeholder="phone number"
                           autoComplete="phoneNumber"
                           onChange={this.handleInputChange}
-                          value={this.state.phoneNumber}
+                          value={this.state.user.phoneNumber}
                         />
                       </div>
                       {this.state.error.phoneNumber && (
@@ -209,16 +246,11 @@ class ProfileUpdate extends Component {
                       <div className="form-group" align="right">
                         <input
                           type="submit"
-                          value="Sign up"
+                          value="Save"
                           className="container d-flex justify-content-center btn login-btn"
                         />
                       </div>
                     </form>
-                  </div>
-                  <div className="card-footer">
-                    <div className="d-flex justify-content-center links">
-                      Already have an account?<Link to="/Login">Sign in</Link>
-                    </div>
                   </div>
                 </div>
               </div>

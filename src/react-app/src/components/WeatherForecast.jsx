@@ -6,7 +6,6 @@ import { useAuthContext } from "./auth/AuthContext";
 const WeatherForecast = () => {
   const [weather, setWeather] = React.useState([]);
   const { currentUser } = useAuthContext();
-  console.log(currentUser);
   React.useEffect(() => {
     const getWeather = async () => {
       await axios
@@ -17,7 +16,6 @@ const WeatherForecast = () => {
           setWeather(response.data);
         })
         .catch((error) => {
-          console.log(error);
           setWeather([]);
         });
     };
@@ -31,9 +29,7 @@ const WeatherForecast = () => {
           <h4>Weather forecast</h4>
           <ul style={{ listStyle: "none" }}>
             {weather.map((item, idx) => {
-              console.log(item);
               let date = new Date(item.date);
-              console.log("date: ", date);
               return (
                 <li key={idx}>
                   <p className="weather-forecast-item d-flex justify-content-center align-items-center">

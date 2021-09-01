@@ -193,20 +193,6 @@ class Signup extends Component {
     return errorCount === 0 ? true : false;
   };
 
-  handleAvatar = (avatar) => {
-    if (avatar) {
-      this.setState({
-        avatar: {
-          ...this.state.avatar,
-          avatarImage: avatar.avatarImage,
-          avatarBase64: avatar.avatarBase64,
-          previewBase64: avatar.previewBase64,
-          title: avatar.title,
-        },
-      });
-    }
-  };
-
   prepareAvatarForm = (avatar, userId) => {
     let avatarForm = new FormData();
 
@@ -255,8 +241,6 @@ class Signup extends Component {
                     >
                       <div>
                         <AvatarUpload
-                          // avatar={this.state.avatar}
-                          // onAvatarSelect={this.handleAvatar}
                           triggerUpload={this.state.triggerAvatarUpload}
                           triggerRequired={true}
                           userId={this.state.userId}

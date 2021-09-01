@@ -64,9 +64,15 @@ namespace Flambee.Service.AppServiceProviders.User
         {
             return await _userInfoRepository.InsertAsync(userInfo);
         }
+
         public async Task<UserInfo> UpdateUserInfo(UserInfo userInfo)
         {
             return await _userInfoRepository.UpdateAsync(userInfo);
+        }
+
+        public async Task UpdateUser(ApplicationUser user)
+        {
+            await _userManager.UpdateAsync(user);
         }
 
         public async Task DeleteUserInfo(UserInfo userInfo)
@@ -88,7 +94,7 @@ namespace Flambee.Service.AppServiceProviders.User
             if (user != null)
             {
                 user.PasswordHash = null;
-                user.UserInfo = _userInfoRepository.GetAllAsync(x => x.ApplicationUserId == user.Id).Result.FirstOrDefault();
+                //user.UserInfo = _userInfoRepository.GetAllAsync(x => x.ApplicationUserId == user.Id).Result.FirstOrDefault();
             }
 
             return user;

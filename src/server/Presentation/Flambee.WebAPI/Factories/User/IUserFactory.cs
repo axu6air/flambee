@@ -1,4 +1,5 @@
-﻿using Flambee.Core.Domain.User;
+﻿using Flambee.Core.Domain.Authentication;
+using Flambee.Core.Domain.User;
 using Flambee.WebAPI.DataTransferModel.User;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,8 @@ namespace Flambee.WebAPI.Factories.User
 {
     public interface IUserFactory
     {
-        UserProfileModel PrepareUserProfileModel(UserInfo user);
+        UserProfileResponseModel PrepareUserProfileResponseModel(UserInfo user);
+
+        Task UpdateUserProfile(UserProfileSubmitModel model, ApplicationUser user);
     }
 }

@@ -56,7 +56,6 @@ const App = () => {
               <Route exact path="/">
                 <Home></Home>
               </Route>
-              <PrivateRoute exact path="/Dashboard" component={Dashboard} />
               <Route exact path="/Login">
                 <Login />
               </Route>
@@ -69,12 +68,15 @@ const App = () => {
               <Route exact path="/ResetPasswordRequest">
                 <ResetPasswordRequest />
               </Route>
-              <Route exact path="/ProfileUpdate">
-                <ProfileUpdate />
-              </Route>
               <Route exact path="/ResetPassword">
                 <ResetPassword />
               </Route>
+              <PrivateRoute exact path="/Dashboard" component={Dashboard} />
+              <PrivateRoute
+                exact
+                path="/ProfileUpdate"
+                component={ProfileUpdate}
+              />
               <AuthVerify />
             </ErrorHandler>
           </AuthProvider>

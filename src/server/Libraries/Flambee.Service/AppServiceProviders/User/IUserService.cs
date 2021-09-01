@@ -15,6 +15,7 @@ namespace Flambee.Service.AppServiceProviders.User
         Task<IList<UserInfo>> GetUserInfoByIds(IList<int> ids);
         Task<IList<UserInfo>> GetUserInfoByIds(IList<Guid> ids);
         Task<UserInfo> CreateUserInfo(UserInfo userDetails);
+        Task UpdateUser(ApplicationUser user);
         Task<UserInfo> UpdateUserInfo(UserInfo userDetails);
         Task DeleteUserInfo(UserInfo userDetails);
         Task<ApplicationUser> GetLoggedInApplicationUserAsync();
