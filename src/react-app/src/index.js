@@ -6,17 +6,17 @@ import axios from "axios";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
 
-axios.defaults.baseURL = "http://localhost:50449";
+axios.defaults.baseURL = "http://localhost:50447";
 const token = localStorage.getItem("bearerToken");
 axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 axios.interceptors.response.use(
   (response) => {
-    if (!response.data.handleLocally) {
+    if (!response.handleLocally) {
       Notify.handleNotification(response);
     }
 
-    return Promise.resolve(response);
+    return Promise.resolve(response.data);
   },
   (error) => {
     const statusCode = error.response ? error.response.status : null;

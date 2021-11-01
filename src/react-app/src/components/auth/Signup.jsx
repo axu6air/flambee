@@ -64,8 +64,8 @@ class Signup extends Component {
 
   componentDidMount() {
     axios.get("/GetFormRules").then((response) => {
-      if (response && response.data) {
-        const usernameRegex = response.data.username;
+      if (response && response) {
+        const usernameRegex = response.username;
         this.setState((prevState) => ({
           regexFields: {
             ...prevState.regexFields,
@@ -115,10 +115,10 @@ class Signup extends Component {
 
     await AuthService.signup(state.user)
       .then((response) => {
-        if (response.status === 200 && response.data.userId) {
+        if (response.status === 200 && response.userId) {
           this.setState({
             triggerAvatarUpload: true,
-            userId: response.data.userId,
+            userId: response.userId,
           });
 
           this.setState({ responseSucceeded: true });

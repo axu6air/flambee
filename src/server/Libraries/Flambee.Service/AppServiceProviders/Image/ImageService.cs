@@ -58,10 +58,14 @@ namespace Flambee.Service.AppServiceProviders.Image
         public string GetUniqueImageName(string imageName)
         {
             imageName = Path.GetFileName(imageName);
-            return Path.GetFileNameWithoutExtension(imageName)
-                      + "_"
-                      + Guid.NewGuid().ToString().Substring(0, 4)
-                      + Path.GetExtension(imageName);
+            //return Path.GetFileNameWithoutExtension(imageName)
+            //          + "_"
+            //          + Guid.NewGuid().ToString().Substring(0, 4)
+            //          + Path.GetExtension(imageName);
+            return string.Concat(Path.GetFileNameWithoutExtension(imageName)
+                                , "_"
+                                , Guid.NewGuid().ToString().AsSpan(0, 4)
+                                , Path.GetExtension(imageName));
         }
 
         public bool UploadImage(IFormFile image, string filePath)

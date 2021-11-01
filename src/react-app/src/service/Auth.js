@@ -48,7 +48,7 @@ class AuthService {
   };
 
   processErrorMessages = (errors) => {
-    if (typeof errors.response.data.errors === "object")
+    if (typeof errors.response.errors === "object")
       errors = Object.values(errors);
     errors.forEach((error) => toast.error(error));
   };

@@ -1,10 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.IO;
 
 namespace Flambee.Core.Configuration.Image
 {
@@ -13,8 +7,16 @@ namespace Flambee.Core.Configuration.Image
         private const string AvatarFolderName = "Avatars";
         private const string PostImageFolderName = "PostImages";
 
-        public static string AvatarPath => GetAvatarPath();
-        public static string PostImagePath => GetPostImagePath();
+        public static string AvatarPath => Path.DirectorySeparatorChar.ToString()
+                                + "Images"
+                                + Path.DirectorySeparatorChar.ToString()
+                                + AvatarFolderName
+                                + Path.DirectorySeparatorChar.ToString();
+        public static string PostImagePath => Path.DirectorySeparatorChar.ToString()
+                                + "Images"
+                                + Path.DirectorySeparatorChar.ToString()
+                                + PostImageFolderName
+                                + Path.DirectorySeparatorChar.ToString();
 
         private static string GetAvatarPath()
         {

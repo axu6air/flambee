@@ -40,7 +40,7 @@ class ProfileUpdate extends Component {
 
     UserService.getUserProfileData(currentUser.applicationUserId)
       .then((response) => {
-        const userData = response.data;
+        const userData = response;
         this.setState({ user: userData });
       })
       .then(() => this.setState({ loading: false }));
@@ -128,8 +128,8 @@ class ProfileUpdate extends Component {
     const model = this.prepareSubmitModel();
 
     axios.put("/User", model).then((response) => {
-      if (response && response.data) {
-        toast.success(response.data.message);
+      if (response && response) {
+        toast.success(response.message);
       }
     });
   };

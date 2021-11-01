@@ -22,11 +22,11 @@ class Notify {
       const statusCode = response.status;
 
       try {
-        if (statusCode === 200 && response.data.message) {
-          self.success(response.data.message);
+        if (statusCode === 200 && response.message) {
+          self.success(response.message);
         } else {
-          if (response.data && response.data.errors) {
-            self.error(response.data.errors);
+          if (response && response.errors) {
+            self.error(response.errors);
           }
         }
       } catch (err) {

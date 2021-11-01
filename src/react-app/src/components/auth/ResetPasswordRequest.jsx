@@ -35,7 +35,7 @@ const ResetPasswordRequest = () => {
         window.location.origin + "/ResetPassword"
       );
 
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         history.push("/Login");
       }
     } finally {

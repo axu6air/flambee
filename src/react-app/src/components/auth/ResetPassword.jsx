@@ -63,7 +63,7 @@ const ResetPassword = ({ match, location }) => {
         token.split(" ").join("+")
       );
       console.log(response);
-      if (response.data.status === 200) {
+      if (response.status === 200) {
         history.push("/Login");
       }
     } finally {

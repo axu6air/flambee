@@ -31,10 +31,10 @@ const Login = () => {
         if (response.status === 200) {
           console.log(response);
 
-          const token = response.data.token;
+          const token = response.token;
           localStorage.bearerToken = token;
 
-          const userInfoModel = response.data.userInfoModel;
+          const userInfoModel = response.userInfoModel;
           console.log(userInfoModel);
           const user = {
             firstName: userInfoModel.firstName,
@@ -43,7 +43,7 @@ const Login = () => {
             applicationUserId: userInfoModel.applicationUserId,
             username: userInfoModel.userModel?.username,
             email: userInfoModel.userModel?.email,
-            token: response.data.token,
+            token: response.token,
           };
 
           console.log("user", user);
