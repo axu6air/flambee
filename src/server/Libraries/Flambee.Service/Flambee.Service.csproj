@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Flambee.Core\Flambee.Core.csproj" />
+    <ProjectReference Include="..\Flambee.Data\Flambee.Data.csproj" />
   </ItemGroup>
 
   <ItemGroup>

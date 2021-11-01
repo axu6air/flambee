@@ -1,17 +1,16 @@
-﻿using Flambee.Core.Helper;
-using Flambee.Core.Data;
+﻿using Flambee.Core;
+using Flambee.Core.Helper;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
-using System.Text;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace Flambee.Core
+namespace Flambee.Data
 {
-    public partial class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
+    public class EntityRepository<TEntity> : IRepository<TEntity> where TEntity : BaseEntity
     {
         private readonly ApplicationDbContext _context;
         private DbSet<TEntity> _entities;
@@ -25,7 +24,7 @@ namespace Flambee.Core
         {
             return await _context.FindAsync<TEntity>(id);
         }
-        
+
         public async Task<IList<TEntity>> GetByIdsAsync(IList<object> ids)
         {
             return await _context.Set<TEntity>().Where(x => ids.Contains(x.Id)).ToListAsync();
@@ -73,11 +72,12 @@ namespace Flambee.Core
                 await _context.Set<TEntity>().AddAsync(entity);
                 await _context.SaveChangesAsync();
                 return entity;
-            } catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return null;
             }
-            
+
         }
 
         public async Task<IList<TEntity>> InsertAsync(IList<TEntity> entities)
@@ -169,3 +169,4 @@ namespace Flambee.Core
 
     }
 }
+

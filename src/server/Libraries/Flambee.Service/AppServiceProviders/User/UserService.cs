@@ -1,6 +1,7 @@
 ﻿using Flambee.Core;
 using Flambee.Core.Domain.Authentication;
 using Flambee.Core.Domain.User;
+using Flambee.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;

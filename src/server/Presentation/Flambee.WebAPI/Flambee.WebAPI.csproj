@@ -23,7 +23,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.8" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.1.4" />
     <PackageReference Include="System.Drawing.Common" Version="5.0.2" />
@@ -31,6 +30,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\Flambee.Core\Flambee.Core.csproj" />
+    <ProjectReference Include="..\..\Libraries\Flambee.Data\Flambee.Data.csproj" />
     <ProjectReference Include="..\..\Libraries\Flambee.Service\Flambee.Service.csproj" />
   </ItemGroup>
 

@@ -1,6 +1,5 @@
 using System.Linq;
-using Flambee.Core.Data;
-using Flambee.Core.Data.Mapping;
+using Flambee.Data.Mapping;
 using Flambee.Service.AppServiceProviders.User;
 using Flambee.WebAPI.Infrastructure.ServiceRegistrar;
 using FluentValidation.AspNetCore;
@@ -18,6 +17,7 @@ using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
+using Flambee.Data;
 
 namespace Flambee.WebAPI
 {

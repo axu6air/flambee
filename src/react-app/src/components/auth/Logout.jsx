@@ -6,6 +6,7 @@ import AuthService from "../../service/Auth";
 const Logout = () => {
   useEffect(() => {
     AuthService.logout();
+    window.location.reload();
   });
 
   return <Redirect to="/Login" />;

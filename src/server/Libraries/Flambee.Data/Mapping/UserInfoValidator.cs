@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flambee.Core.Data.Mapping
+namespace Flambee.Data.Mapping
 {
     public class UserInfoValidator : AbstractValidator<UserInfo>
     {

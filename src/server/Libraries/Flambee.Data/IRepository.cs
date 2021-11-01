@@ -1,4 +1,5 @@
-﻿using Flambee.Core.Helper;
+﻿using Flambee.Core;
+using Flambee.Core.Helper;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,7 +7,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flambee.Core
+namespace Flambee.Data
 {
     public interface IRepository<TEntity> where TEntity : BaseEntity
     {

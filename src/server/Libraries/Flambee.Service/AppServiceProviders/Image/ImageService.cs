@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Threading.Tasks;
 using Flambee.Core.Configuration.Image;
 using Microsoft.EntityFrameworkCore;
+using Flambee.Data;
 
 namespace Flambee.Service.AppServiceProviders.Image
 {

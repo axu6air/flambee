@@ -8,6 +8,7 @@ using Flambee.Service.AppServiceProviders.Image;
 using Flambee.WebAPI.Factories.Image;
 using Microsoft.AspNetCore.Http;
 using Flambee.WebAPI.Factories.User;
+using Flambee.Data;
 
 namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
 {

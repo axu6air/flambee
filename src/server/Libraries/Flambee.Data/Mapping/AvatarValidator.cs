@@ -1,7 +1,7 @@
 ﻿using Flambee.Core.Domain.Image;
 using FluentValidation;
 
-namespace Flambee.Core.Data.Mapping
+namespace Flambee.Data.Mapping
 {
     public class AvatarValidator : AbstractValidator<Avatar>
     {

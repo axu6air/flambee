@@ -1,5 +1,5 @@
-﻿using Flambee.Core.Data;
-using Flambee.Core.Domain.Authentication;
+﻿using Flambee.Core.Domain.Authentication;
+using Flambee.Data;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
