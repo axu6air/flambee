@@ -40,8 +40,8 @@ const Login = () => {
             firstName: userInfoModel.firstName,
             lastName: userInfoModel.lastName,
             phoneNumber: userInfoModel.phoneNumber,
-            applicationUserId: userInfoModel.applicationUserId,
-            username: userInfoModel.userModel?.username,
+            applicationUserId: response.id,
+            username: response.username,
             email: userInfoModel.userModel?.email,
             token: response.token,
           };

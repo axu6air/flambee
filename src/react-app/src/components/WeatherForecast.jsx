@@ -36,13 +36,12 @@ const WeatherForecast = () => {
     maximumTemperature = 0;
   const processOpenWeatherData = (data) => {
     if (data && data.list.length > 0) {
-      const weatherList = data.list;
-
-      weatherList.forEach((weather) => {
-        let date = new Date(weather.dt * 1000).toLocaleString();
-        console.log(weather);
-        console.log(date);
-      });
+      // const weatherList = data.list;
+      // weatherList.forEach((weather) => {
+      //   let date = new Date(weather.dt * 1000).toLocaleString();
+      //   console.log(weather);
+      //   console.log(date);
+      // });
     }
   };
 

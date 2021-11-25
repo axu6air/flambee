@@ -1,19 +1,23 @@
-﻿using Flambee.Core.Domain.Authentication;
+﻿using Flambee.Core.Configuration.Email;
+using Flambee.Core.Domain.Authentication;
 using Flambee.Service.AppServiceProviders.Authentication;
 using Flambee.Service.AppServiceProviders.Email;
 using Flambee.Service.AppServiceProviders;
+using Flambee.WebAPI.DataTransferModel;
 using Flambee.WebAPI.DataTransferModel.Auth;
 using Flambee.WebAPI.Factories.Auth;
 using Flambee.WebAPI.Models.Authentication;
 using Flambee.WebAPI.Models.User;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -72,6 +76,7 @@ namespace Flambee.WebAPI.Controllers
                     Status = StatusCodes.Status200OK,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
                     Id = user.Id,
+                    Username = user.UserName,
                     UserInfoModel = _mapper.Map<UserInfoModel>(user.UserInfo),
                     Message = "Successfully logged in"
                 };

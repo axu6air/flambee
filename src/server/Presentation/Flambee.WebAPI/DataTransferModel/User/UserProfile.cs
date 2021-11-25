@@ -11,7 +11,7 @@ namespace Flambee.WebAPI.DataTransferModel.User
 
     public class UserProfileResponseModel : BaseResponseModel, IUserProfileModel
     {
-        public Guid UserId { get; set; }
+        public object UserId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string Email { get; set; }
@@ -22,7 +22,7 @@ namespace Flambee.WebAPI.DataTransferModel.User
     public class UserProfileSubmitModel : IUserProfileModel
     {
         [Required]
-        public Guid UserId { get; set; }
+        public object UserId { get; set; }
         [Required]
         public string FirstName { get; set; }
         [Required]
@@ -37,7 +37,7 @@ namespace Flambee.WebAPI.DataTransferModel.User
 
     public interface IUserProfileModel
     {
-        public Guid UserId { get; set; }
+        public object UserId { get; set; }
         
         public string FirstName { get; set; }
         

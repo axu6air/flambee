@@ -12,5 +12,6 @@ namespace Flambee.WebAPI.DataTransferModel.Auth
         public ObjectId Id { get; set; }
         public string Token { get; set; }
         public UserInfoModel UserInfoModel { get; set; }
+        public string Username { get; set; }
     }
 }

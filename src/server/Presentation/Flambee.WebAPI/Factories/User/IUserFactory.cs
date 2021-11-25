@@ -10,8 +10,8 @@ namespace Flambee.WebAPI.Factories
 {
     public interface IUserFactory
     {
-        //UserProfileResponseModel PrepareUserProfileResponseModel(UserInfo user);
+        UserProfileResponseModel PrepareUserProfileResponseModel(User user);
 
-        //Task UpdateUserProfile(UserProfileSubmitModel model, User user);
+        Task UpdateUserProfile(UserProfileSubmitModel model, User user);
     }
 }
