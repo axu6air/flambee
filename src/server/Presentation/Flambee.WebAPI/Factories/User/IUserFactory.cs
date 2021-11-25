@@ -12,6 +12,6 @@ namespace Flambee.WebAPI.Factories
     {
         UserProfileResponseModel PrepareUserProfileResponseModel(User user);
 
-        Task UpdateUserProfile(UserProfileSubmitModel model, User user);
+        void PrepareUserUpdate(UserProfileSubmitModel userProfile, User user);
     }
 }

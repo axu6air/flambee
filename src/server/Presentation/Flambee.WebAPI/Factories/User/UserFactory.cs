@@ -36,29 +36,25 @@ namespace Flambee.WebAPI.Factories
             return model;
         }
 
-        public async Task UpdateUserProfile(UserProfileSubmitModel userProfile, User user)
+        public void PrepareUserUpdate(UserProfileSubmitModel userProfile, User user)
         {
-            var userInfo = await _userService.GetUser(userProfile.UserId);
+            if (userProfile == null || user == null)
+                throw new NullReferenceException();
 
-            if (userInfo == null)
-                throw new Exception(nameof(userInfo));
+            user.UserInfo.FirstName = userProfile.FirstName;
+            user.UserInfo.LastName = userProfile.LastName;
 
-            foreach (PropertyInfo profileProp in userProfile.GetType().GetProperties())
+            if (user.PhoneNumber != userProfile.PhoneNumber)
             {
-                foreach (PropertyInfo infoProp in userInfo.GetType().GetProperties())
-                {
-                    if (infoProp.Name.ToLower() == profileProp.Name.ToLower())
-                    {
-                        infoProp.SetValue(userInfo, profileProp.GetValue(userProfile));
-                        break;
-                    }
-                }
+                user.PhoneNumber = userProfile.PhoneNumber;
+                user.PhoneNumberConfirmed = false;
             }
 
-            user.Email = userProfile.Email;
-
-            await _userService.UpdateUser(user);
-
+            if (user.Email != userProfile.Email)
+            {
+                user.Email = userProfile.Email;
+                user.EmailConfirmed = false;
+            }
         }
     }
 }

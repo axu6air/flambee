@@ -3,6 +3,7 @@ using Flambee.WebAPI.Attributes;
 using Flambee.WebAPI.DataTransferModel;
 using Flambee.WebAPI.DataTransferModel.User;
 using Flambee.WebAPI.Factories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -15,6 +16,7 @@ namespace Flambee.WebAPI.Controllers
 {
     [Route("/[controller]")]
     [ApiController]
+    [Authorize]
     public class UserController : BaseController
     {
         private readonly IUserService _userService;
@@ -50,7 +52,8 @@ namespace Flambee.WebAPI.Controllers
             if (user == null)
                 return BadRequest();
 
-            await _userFactory.UpdateUserProfile(model, user);
+            _userFactory.PrepareUserUpdate(model, user);
+            await _userService.UpdateUser(user);
 
             return Ok(new BaseResponseModel
             {
