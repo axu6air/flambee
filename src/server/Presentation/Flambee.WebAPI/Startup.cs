@@ -1,6 +1,5 @@
 using System.Linq;
-using Flambee.Data.Mapping;
-using Flambee.Service.AppServiceProviders.User;
+using Flambee.Service.AppServiceProviders;
 using Flambee.WebAPI.Infrastructure.ServiceRegistrar;
 using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Builder;
@@ -18,11 +17,14 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Http.Features;
 using Flambee.Data;
+using Flambee.Core.Domain.UserDetails;
 
 namespace Flambee.WebAPI
 {
     public class Startup
     {
+        //private string ConnectionString => Configuration.GetConnectionString("DefaultConnection");
+        private string ConnectionString => Configuration.GetConnectionString("MongoConnectionString");
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -33,23 +35,37 @@ namespace Flambee.WebAPI
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.Configure<MongoDbSettings>(Configuration.GetSection("MongoDbSettings"));
+            services.AddSingleton<IMongoDbSettings>(serviceProvider =>
+        serviceProvider.GetRequiredService<Microsoft.Extensions.Options.IOptions<MongoDbSettings>>().Value);
             services.AddAutoMapper(typeof(Startup));
-            services.AddControllers()
+            services
+                .AddControllers()
                 .AddNewtonsoftJson(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-                })
-                .AddFluentValidation(fv =>
-                {
-                    fv.RegisterValidatorsFromAssemblyContaining<UserInfoValidator>();
                 });
 
-            services.AddDbContext<ApplicationDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("ConnStr")));
+            services.AddIdentityMongoDbProvider<User>(identity =>
+            {
+                identity.Password.RequireDigit = false;
+                identity.Password.RequireLowercase = false;
+                identity.Password.RequireNonAlphanumeric = false;
+                identity.Password.RequireUppercase = false;
+                identity.Password.RequiredLength = 1;
+                identity.Password.RequiredUniqueChars = 0;
+            },
+                mongo =>
+                {
+                    mongo.ConnectionString = ConnectionString;
+                }
+            );
+
 
             services.AddHttpContextAccessor();
 
-            services.RegisterIdentity();
+            services.RegisterIdentity(Configuration);
             services.RegisterDependencyInjection();
             services.RegisterJwtAuth(Configuration);
             services.RegisterCors();

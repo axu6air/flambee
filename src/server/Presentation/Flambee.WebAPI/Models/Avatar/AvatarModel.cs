@@ -1,4 +1,5 @@
 ﻿using Flambee.WebAPI.Models.User;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +21,7 @@ namespace Flambee.WebAPI.Models.Avatar
         public string DisplayName { get; set; }
         public bool IsDeleted { get; set; }
 
-        public Guid UserId { get; set; }
+        public ObjectId UserId { get; set; }
 
         public UserModel UserModel { get; set; }
     }

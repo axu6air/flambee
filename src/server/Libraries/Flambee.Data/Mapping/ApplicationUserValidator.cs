@@ -1,18 +1,18 @@
-﻿using Flambee.Core.Domain.Authentication;
-using FluentValidation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿//using Flambee.Core.Domain.Authentication;
+//using FluentValidation;
+//using System;
+//using System.Collections.Generic;
+//using System.Linq;
+//using System.Text;
+//using System.Threading.Tasks;
 
-namespace Flambee.Data.Mapping
-{
-    public class ApplicationUserValidator : AbstractValidator<ApplicationUser>
-    {
-        public ApplicationUserValidator()
-        {
-            RuleFor(x => x.Id).NotNull();
-        }
-    }
-}
+//namespace Flambee.Data.Mapping
+//{
+//    public class ApplicationUserValidator : AbstractValidator<ApplicationUser>
+//    {
+//        public ApplicationUserValidator()
+//        {
+//            RuleFor(x => x.Id).NotNull();
+//        }
+//    }
+//}

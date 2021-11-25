@@ -11,25 +11,31 @@ using System.Threading.Tasks;
 using Flambee.Core.Configuration.Image;
 using Microsoft.EntityFrameworkCore;
 using Flambee.Data;
+using MongoDB.Driver.Linq;
+using MongoDB.Bson;
+using MongoDB.Driver;
+using Flambee.Core.Domain.UserDetails;
 
 namespace Flambee.Service.AppServiceProviders.Image
 {
     public class ImageService : IImageService
     {
-        private readonly IRepository<Avatar> _avatarRepository;
+        private readonly IMongoRepository<User> _userRepository;
         private readonly IWebHostEnvironment _environment;
 
-        public ImageService(IRepository<Avatar> avatarRepository, IWebHostEnvironment environment)
+        public ImageService(IWebHostEnvironment environment, IMongoRepository<User> userRepository)
         {
-            _avatarRepository = avatarRepository;
+            _userRepository = userRepository;
             _environment = environment;
         }
 
-        public async Task<Avatar> AddAvatar(Avatar avatar)
+        public async Task<Avatar> AddAvatar(User user, Avatar avatar)
         {
-            if (avatar != null)
+            if (avatar != null && user != null)
             {
-                avatar = await _avatarRepository.InsertAsync(avatar);
+                user.Avatars.Add(avatar);
+                await _userRepository.Update(user);
+
                 return avatar;
             }
 
@@ -38,7 +44,7 @@ namespace Flambee.Service.AppServiceProviders.Image
 
         public string CheckImagePath(string path)
         {
-            if(!Directory.Exists(path))
+            if (!Directory.Exists(path))
                 Directory.CreateDirectory(path);
 
             return path;
@@ -75,23 +81,21 @@ namespace Flambee.Service.AppServiceProviders.Image
             {
                 image.CopyTo(new FileStream(_environment.WebRootPath + filePath, FileMode.Create));
                 return true;
-            } 
-            catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 return false;
             }
         }
 
-        public async Task<Avatar> GetAvatar(Guid userId)
+        public async Task<Avatar> GetAvatar(ObjectId userId)
         {
-            var avatar = await (from av in _avatarRepository.Table
-                          where userId.Equals(av.UserId)
-                          orderby av.Id descending
-                          select av
-                          ).FirstOrDefaultAsync();
+            var user = await _userRepository.Query.Where(x=>x.Id.Equals(userId)).FirstOrDefaultAsync();
+            if (user == null) 
+                return null;
+            var avatar = user.Avatars.OrderByDescending(x => x.UploadTime).FirstOrDefault();
 
             return avatar != null && !avatar.IsDeleted ? avatar : null;
-
         }
 
 

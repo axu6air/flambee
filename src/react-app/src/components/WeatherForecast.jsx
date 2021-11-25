@@ -5,7 +5,7 @@ import { useAuthContext } from "./auth/AuthContext";
 
 const WeatherForecast = () => {
   const [weather, setWeather] = React.useState([]);
-  const [openWeatherData, setOpenWeatherData] = React.useState({});
+  //const [openWeatherData, setOpenWeatherData] = React.useState({});
   const [location, setLocation] = React.useState("");
   const { currentUser } = useAuthContext();
   React.useEffect(() => {

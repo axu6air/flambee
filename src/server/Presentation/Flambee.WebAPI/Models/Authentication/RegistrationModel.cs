@@ -7,7 +7,7 @@ namespace Flambee.WebAPI.Models.Authentication
     public class RegistrationModel
     {
         [Required(ErrorMessage = "User Name is required")]
-        [RegularExpression(UserRules.Username, ErrorMessage = "Invalid Username")]
+        [RegularExpression(UserRules.UsernameExpression, ErrorMessage = "Invalid Username")]
         public string Username { get; set; }
 
         [EmailAddress]

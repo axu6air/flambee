@@ -1,29 +1,24 @@
-﻿using Flambee.Core.Configuration.Email;
-using Flambee.Core.Domain.Authentication;
+﻿using Flambee.Core.Domain.Authentication;
 using Flambee.Service.AppServiceProviders.Authentication;
 using Flambee.Service.AppServiceProviders.Email;
-using Flambee.Service.AppServiceProviders.User;
-using Flambee.WebAPI.DataTransferModel;
+using Flambee.Service.AppServiceProviders;
 using Flambee.WebAPI.DataTransferModel.Auth;
 using Flambee.WebAPI.Factories.Auth;
-//using Flambee.WebAPI.Models;
 using Flambee.WebAPI.Models.Authentication;
 using Flambee.WebAPI.Models.User;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using System.Text.RegularExpressions;
 using Flambee.Core.Configuration.User;
+using Flambee.Core.Domain.UserDetails;
 
 namespace Flambee.WebAPI.Controllers
 {
@@ -34,21 +29,21 @@ namespace Flambee.WebAPI.Controllers
         private readonly IAuthService _authService;
         private readonly IConfiguration _configuration;
         private readonly IAuthFactory _authFactory;
-        private readonly IUserService _userDetailsService;
+        private readonly IUserService _userService;
         private readonly IEmailService _emailService;
         private readonly IMapper _mapper;
 
         public AuthController(IAuthService authService,
             IConfiguration configuration,
             IAuthFactory authFactory,
-            IUserService userDetailsService,
+            IUserService userService,
             IEmailService emailService,
             IMapper mapper)
         {
             _authService = authService;
             _configuration = configuration;
             _authFactory = authFactory;
-            _userDetailsService = userDetailsService;
+            _userService = userService;
             _emailService = emailService;
             _mapper = mapper;
         }
@@ -57,7 +52,14 @@ namespace Flambee.WebAPI.Controllers
         [Route("/Login")]
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
-            var user = await _authService.FindByNameAsync(model.Username);
+            User user = null;
+            var result = _authFactory.DetermineLoginMethod(model.Username);
+
+            if (result.isUsername)
+                user = await _userService.FindByUsername(model.Username);
+            else if (result.isEmail)
+                user = await _userService.FindByEmail(model.Username);
+
             if (user != null && await _authService.CheckPasswordAsync(user, model.Password))
             {
                 await _authService.SignInAsync(user, true);
@@ -69,7 +71,8 @@ namespace Flambee.WebAPI.Controllers
                 {
                     Status = StatusCodes.Status200OK,
                     Token = new JwtSecurityTokenHandler().WriteToken(token),
-                    UserInfoModel = await GetUserInfo(user),
+                    Id = user.Id,
+                    UserInfoModel = _mapper.Map<UserInfoModel>(user.UserInfo),
                     Message = "Successfully logged in"
                 };
 
@@ -81,7 +84,7 @@ namespace Flambee.WebAPI.Controllers
                 Token = String.Empty,
                 UserInfoModel = null,
                 Errors = new List<string> { "Username or password is incorrect" },
-                
+
             });
         }
 
@@ -89,15 +92,24 @@ namespace Flambee.WebAPI.Controllers
         [Route("/Register")]
         public async Task<IActionResult> Register([FromBody] RegistrationModel model)
         {
-            var userExists = await _authService.FindByNameAsync(model.Username);
+            var userExists = await _userService.FindByUsername(model.Username);
             if (userExists != null)
                 return BadRequest(_authFactory.PrepareRegistrationResponseModel());
 
-            ApplicationUser user = new ApplicationUser()
+            UserInfo userInfo = new()
+            {
+                DateOfBirth = model.DateOfBirth,
+                FirstName = model.FirstName,
+                LastName = model.LastName,  
+                PhoneNumber = model.PhoneNumber
+            };
+
+            User user = new()
             {
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
+                UserName = model.Username,
+                UserInfo = userInfo,
             };
 
             var result = await _authService.CreateAsync(user, model.Password);
@@ -111,28 +123,28 @@ namespace Flambee.WebAPI.Controllers
             return Ok(response);
         }
 
-        [HttpPost]
-        [Route("/Register-Admin")]
-        public async Task<IActionResult> RegisterAdmin([FromBody] RegistrationModel model)
-        {
-            var userExists = await _authService.FindByNameAsync(model.Username);
-            if (userExists != null)
-                return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponseModel { Status = StatusCodes.Status400BadRequest, Message = "User already exists!" });
+        //[HttpPost]
+        //[Route("/Register-Admin")]
+        //public async Task<IActionResult> RegisterAdmin([FromBody] RegistrationModel model)
+        //{
+        //    var userExists = await _authService.FindByNameAsync(model.Username);
+        //    if (userExists != null)
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponseModel { Status = StatusCodes.Status400BadRequest, Message = "User already exists!" });
 
-            ApplicationUser user = new ApplicationUser()
-            {
-                Email = model.Email,
-                SecurityStamp = Guid.NewGuid().ToString(),
-                UserName = model.Username
-            };
-            var result = await _authService.CreateAsync(user, model.Password);
-            if (!result.Succeeded)
-                return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponseModel { Status = StatusCodes.Status400BadRequest, Message = "User creation failed! Please check user details and try again." });
+        //    ApplicationUser user = new ApplicationUser()
+        //    {
+        //        Email = model.Email,
+        //        SecurityStamp = Guid.NewGuid().ToString(),
+        //        UserName = model.Username
+        //    };
+        //    var result = await _authService.CreateAsync(user, model.Password);
+        //    if (!result.Succeeded)
+        //        return StatusCode(StatusCodes.Status500InternalServerError, new BaseResponseModel { Status = StatusCodes.Status400BadRequest, Message = "User creation failed! Please check user details and try again." });
 
-            await AssignRole(user, model, isAdmin: true);
+        //    await AssignRole(user, model, isAdmin: true);
 
-            return Ok(new BaseResponseModel { Status = StatusCodes.Status200OK, Message = "User created successfully!" });
-        }
+        //    return Ok(new BaseResponseModel { Status = StatusCodes.Status200OK, Message = "User created successfully!" });
+        //}
 
         [HttpPost]
         [Route("/Logout")]
@@ -151,11 +163,10 @@ namespace Flambee.WebAPI.Controllers
 
             username = username.Trim();
 
-            Regex regex = new Regex(UserRules.Username);
-            if (!regex.IsMatch(username))
+            if (!UserRules.IsUsernameValid(username))
                 return Ok(new UsernameAvailabilityResponseModel(false));
 
-            var userExists = await _authService.FindByNameAsync(username);
+            var userExists = await _userService.FindByUsername(username);
 
             if (userExists != null)
                 return Ok(new UsernameAvailabilityResponseModel(false));
@@ -163,99 +174,99 @@ namespace Flambee.WebAPI.Controllers
             return Ok(new UsernameAvailabilityResponseModel(true));
         }
 
-        [HttpPost]
-        [Route("/RecoveryPasswordRequest")]
-        public async Task<IActionResult> RecoveryPassword(RecoveryPasswordRequestModel requestModel)
-        {
-            if (string.IsNullOrEmpty(requestModel.Email) || string.IsNullOrWhiteSpace(requestModel.Email))
-                return BadRequest("");
+        //[HttpPost]
+        //[Route("/RecoveryPasswordRequest")]
+        //public async Task<IActionResult> RecoveryPassword(RecoveryPasswordRequestModel requestModel)
+        //{
+        //    if (string.IsNullOrEmpty(requestModel.Email) || string.IsNullOrWhiteSpace(requestModel.Email))
+        //        return BadRequest("");
 
-            var applicationUser = await _userDetailsService.GetApplicationUserAsync(requestModel.Email);
+        //    var applicationUser = await _userDetailsService.GetApplicationUserAsync(requestModel.Email);
 
-            if (applicationUser == null)
-                return BadRequest("");
+        //    if (applicationUser == null)
+        //        return BadRequest("");
 
-            StringBuilder resetPasswordLink = new StringBuilder();
-            resetPasswordLink.Append(requestModel.ClientRecoveryPasswordUrl);
-            resetPasswordLink.Append("?email=" + applicationUser.Email + "&token=");
-            resetPasswordLink.Append(await _authService.GeneratePasswordResetTokenAsync(applicationUser));
+        //    StringBuilder resetPasswordLink = new StringBuilder();
+        //    resetPasswordLink.Append(requestModel.ClientRecoveryPasswordUrl);
+        //    resetPasswordLink.Append("?email=" + applicationUser.Email + "&token=");
+        //    resetPasswordLink.Append(await _authService.GeneratePasswordResetTokenAsync(applicationUser));
 
-            var emailRequest = _authFactory.PrepareRecoveryPasswordEmailRequest(requestModel.Email, resetPasswordLink.ToString());
+        //    var emailRequest = _authFactory.PrepareRecoveryPasswordEmailRequest(requestModel.Email, resetPasswordLink.ToString());
 
-            if (emailRequest == null)
-                return Problem(
-                       detail: "Internal server error occured",
-                       statusCode: StatusCodes.Status500InternalServerError
-                   );
+        //    if (emailRequest == null)
+        //        return Problem(
+        //               detail: "Internal server error occured",
+        //               statusCode: StatusCodes.Status500InternalServerError
+        //           );
 
-            var res = await _emailService.SendEmailAsync(emailRequest);
+        //    var res = await _emailService.SendEmailAsync(emailRequest);
 
-            if (!res)
-                return Problem(
-                    detail: "Internal server error occured",
-                    statusCode: StatusCodes.Status500InternalServerError
-                );
+        //    if (!res)
+        //        return Problem(
+        //            detail: "Internal server error occured",
+        //            statusCode: StatusCodes.Status500InternalServerError
+        //        );
 
-            return Ok(new BaseResponseModel
-            {
-                Status = StatusCodes.Status200OK,
-                Message = "Check your email to reset your password"
-            });
-        }
+        //    return Ok(new BaseResponseModel
+        //    {
+        //        Status = StatusCodes.Status200OK,
+        //        Message = "Check your email to reset your password"
+        //    });
+        //}
 
-        [HttpPost]
-        [Route("/RecoveryPassword")]
-        public async Task<IActionResult> RecoveryPassword(RecoveryPasswordConfirmationModel confirmationModel)
-        {
-            if (!ModelState.IsValid)
-                return BadRequest(new BaseErrorModel
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Errors = new List<string> { "Please enter the fields correctly."}
-                });
+        //[HttpPost]
+        //[Route("/RecoveryPassword")]
+        //public async Task<IActionResult> RecoveryPassword(RecoveryPasswordConfirmationModel confirmationModel)
+        //{
+        //    if (!ModelState.IsValid)
+        //        return BadRequest(new BaseErrorModel
+        //        {
+        //            Status = StatusCodes.Status400BadRequest,
+        //            Errors = new List<string> { "Please enter the fields correctly."}
+        //        });
 
-            var applicationUser = await _userDetailsService.GetApplicationUserAsync(confirmationModel.Email);
+        //    var applicationUser = await _userDetailsService.GetApplicationUserAsync(confirmationModel.Email);
 
-            if (applicationUser == null)
-                return BadRequest(new BaseErrorModel
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Errors = new List<string> { "No such user." }
-                });
+        //    if (applicationUser == null)
+        //        return BadRequest(new BaseErrorModel
+        //        {
+        //            Status = StatusCodes.Status400BadRequest,
+        //            Errors = new List<string> { "No such user." }
+        //        });
 
-            var result = await _authService.ResetPasswordAsync(applicationUser, confirmationModel.Token, confirmationModel.Password);
+        //    var result = await _authService.ResetPasswordAsync(applicationUser, confirmationModel.Token, confirmationModel.Password);
 
-            if (!result.Succeeded)
-                return BadRequest(new BaseErrorModel
-                {
-                    Status = StatusCodes.Status400BadRequest,
-                    Errors = result.Errors.Select(res => res.Description).ToList()
-                });
+        //    if (!result.Succeeded)
+        //        return BadRequest(new BaseErrorModel
+        //        {
+        //            Status = StatusCodes.Status400BadRequest,
+        //            Errors = result.Errors.Select(res => res.Description).ToList()
+        //        });
 
-            return Ok(new BaseResponseModel
-            {
-                Status = StatusCodes.Status200OK,
-                Message = "Password successfully changed"
-            });
-        }
+        //    return Ok(new BaseResponseModel
+        //    {
+        //        Status = StatusCodes.Status200OK,
+        //        Message = "Password successfully changed"
+        //    });
+        //}
 
-        [HttpGet]
-        [Route("/GetFormRules")]
-        public IActionResult GetFormRules()
-        {
-            FormRulesModel rulesModel = new();
-            return Ok(rulesModel);
-        } 
+        //[HttpGet]
+        //[Route("/GetFormRules")]
+        //public IActionResult GetFormRules()
+        //{
+        //    FormRulesModel rulesModel = new();
+        //    return Ok(rulesModel);
+        //} 
 
-        private async Task AssignRole(ApplicationUser user, RegistrationModel model, bool isAdmin = false)
+        private async Task AssignRole(User user, RegistrationModel model, bool isAdmin = false)
         {
             if (!await _authService.RoleExistsAsync(UserRoles.User))
-                await _authService.CreateAsync(new ApplicationRole(UserRoles.User));
+                await _authService.CreateRoleAsync(new UserRole(UserRoles.User));
 
             if (isAdmin)
             {
                 if (!await _authService.RoleExistsAsync(UserRoles.Admin))
-                    await _authService.CreateAsync(new ApplicationRole(UserRoles.Admin));
+                    await _authService.CreateRoleAsync(new UserRole(UserRoles.Admin));
 
                 if (await _authService.RoleExistsAsync(UserRoles.Admin))
                     await _authService.AddToRoleAsync(user, UserRoles.Admin);
@@ -265,22 +276,22 @@ namespace Flambee.WebAPI.Controllers
 
 
 
-            var userInfo = _authFactory.PrepareUserInfo(model, user);
-            await _userDetailsService.CreateUserInfo(userInfo);
+            //var userInfo = _authFactory.PrepareUserInfo(model, user);
+            //await _userDetailsService.CreateUserInfo(userInfo);
         }
 
-        private async Task<UserInfoModel> GetUserInfo(ApplicationUser user)
+        private async Task<UserInfoModel> GetUserInfo(User user)
         {
             if (user == null)
                 return new UserInfoModel();
-            var userInfo = await _userDetailsService.GetUserInfoById(user.Id);
-            var userInfoModel = _mapper.Map<UserInfoModel>(userInfo);
+            var existingUser = await _userService.GetUser(user.Id);
+            var userInfoModel = _mapper.Map<UserInfoModel>(existingUser.UserInfo);
             userInfoModel.UserModel = _mapper.Map<UserModel>(user);
 
             return userInfoModel;
         }
 
-        private JwtSecurityToken GenerateJwt(ApplicationUser user, IList<string> userRoles)
+        private JwtSecurityToken GenerateJwt(User user, IList<string> userRoles)
         {
             var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:Secret"]));
 
@@ -293,19 +304,16 @@ namespace Flambee.WebAPI.Controllers
                 };
 
             foreach (var userRole in userRoles)
-            {
                 authClaims.Add(new Claim(ClaimTypes.Role, userRole));
-            }
 
             var token = new JwtSecurityToken(
                 issuer: _configuration["JWT:ValidIssuer"],
                 audience: _configuration["JWT:ValidAudience"],
-                expires: DateTime.Now.AddDays(1), //null,
+                expires: DateTime.Now.AddDays(1),
                 claims: authClaims,
                 signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256));
 
             return token;
-
         }
 
     }

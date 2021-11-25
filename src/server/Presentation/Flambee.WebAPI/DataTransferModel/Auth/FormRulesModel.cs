@@ -8,6 +8,6 @@ namespace Flambee.WebAPI.DataTransferModel.Auth
 {
     public class FormRulesModel : BaseResponseModel
     {
-        public string Username => UserRules.Username;
+        public string Username => UserRules.UsernameExpression;
     }
 }

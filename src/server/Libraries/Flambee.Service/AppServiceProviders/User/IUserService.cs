@@ -1,26 +1,27 @@
 ﻿using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
+using Flambee.Core.Domain.UserDetails;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MongoDB.Bson;
 
-namespace Flambee.Service.AppServiceProviders.User
+namespace Flambee.Service.AppServiceProviders
 {
     public interface IUserService
     {
-        Task<UserInfo> GetUserInfoById(int id);
-        Task<UserInfo> GetUserInfoById(Guid id);
-        Task<IList<UserInfo>> GetUserInfoByIds(IList<int> ids);
-        Task<IList<UserInfo>> GetUserInfoByIds(IList<Guid> ids);
-        Task<UserInfo> CreateUserInfo(UserInfo userDetails);
-        Task UpdateUser(ApplicationUser user);
-        Task<UserInfo> UpdateUserInfo(UserInfo userDetails);
-        Task DeleteUserInfo(UserInfo userDetails);
-        Task<ApplicationUser> GetLoggedInApplicationUserAsync();
-        
-        Task<ApplicationUser> GetApplicationUserAsync(string email);
-        Task<ApplicationUser> GetApplicationUser(Guid id);
+        Task<User> GetUser(object id);
+        Task<User> GetUser(string username = null, string email = null);
+        Task<IList<User>> GetUsers(IList<object> ids);
+        Task<User> FindById(object userId);
+        Task<User> FindByEmail(string email);
+        Task<User> FindByUsername(string userName);
+        Task<User> GetLoggedInApplicationUserAsync();
+        Task<User> CreateUser(User user);
+        Task<User> UpdateUser(User user);
+        Task<UserInfo> UpsertUserInfo(UserInfo userInfo);
+        Task DeleteUser(User user);
+        Task DeleteUserInfo(object userInfoId);
     }
 }

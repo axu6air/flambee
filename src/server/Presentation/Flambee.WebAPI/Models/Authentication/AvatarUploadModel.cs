@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -10,7 +11,7 @@ namespace Flambee.WebAPI.Models.Authentication
     public class AvatarUploadModel
     {
         [Required]
-        public Guid UserId { get; set; }
+        public ObjectId UserId { get; set; }
 
         public string Title { get; set; }
         [Required]

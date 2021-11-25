@@ -1,5 +1,7 @@
 ﻿using Flambee.Core.Domain.Image;
+using Flambee.Core.Domain.UserDetails;
 using Microsoft.AspNetCore.Http;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,7 +12,7 @@ namespace Flambee.Service.AppServiceProviders.Image
 {
     public interface IImageService
     {
-        Task<Avatar> AddAvatar(Avatar avatar);
+        Task<Avatar> AddAvatar(User user,Avatar avatar);
 
         string CheckImagePath(string path);
 
@@ -22,6 +24,6 @@ namespace Flambee.Service.AppServiceProviders.Image
 
         bool UploadImage(IFormFile image, string filePath);
 
-        Task<Avatar> GetAvatar(Guid userId);
+        Task<Avatar> GetAvatar(ObjectId userId);
     }
 }

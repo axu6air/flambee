@@ -7,7 +7,7 @@ namespace Flambee.WebAPI.DataTransferModel.Image
 {
     public class AvatarModel
     {
-        public int Id { get; set; }
+        public object Id { get; set; }
         public string AvatarBase64 { get; set; }
         public string PreviewBase64 { get; set; }
         public string Title { get; set; }

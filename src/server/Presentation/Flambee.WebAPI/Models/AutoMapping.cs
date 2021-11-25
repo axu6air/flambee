@@ -1,5 +1,5 @@
 ﻿using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
+using Flambee.Core.Domain.UserDetails;
 using Flambee.WebAPI.Models.User;
 using AutoMapper;
 using Flambee.WebAPI.Models.Avatar;
@@ -9,7 +9,7 @@ public class AutoMapping : Profile
 {
     public AutoMapping()
     {
-        CreateMap<ApplicationUser, UserModel>().ReverseMap();
+        CreateMap<User, UserModel>().ReverseMap();
         CreateMap<UserInfo, UserInfoModel>().ReverseMap();
         CreateMap<Avatar, AvatarModel>().ReverseMap();
     }

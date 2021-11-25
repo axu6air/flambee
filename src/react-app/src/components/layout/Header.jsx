@@ -17,7 +17,7 @@ const Header = (params) => {
               className="brand-logo"
               href={currentUser && currentUser.username ? "/Dashboard" : "/"}
             >
-              Refactored Enigma
+              Flambee
             </a>
           </div>
           <div className="header-items d-flex justify-content-end">

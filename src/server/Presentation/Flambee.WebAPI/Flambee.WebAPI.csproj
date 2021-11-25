@@ -29,8 +29,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Libraries\Flambee.Core\Flambee.Core.csproj" />
-    <ProjectReference Include="..\..\Libraries\Flambee.Data\Flambee.Data.csproj" />
     <ProjectReference Include="..\..\Libraries\Flambee.Service\Flambee.Service.csproj" />
   </ItemGroup>
 

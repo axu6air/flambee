@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Flambee.Service.AppServiceProviders.Authentication;
-using Flambee.Service.AppServiceProviders.User;
+using Flambee.Service.AppServiceProviders;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -55,19 +55,11 @@ namespace Flambee.WebAPI.Controllers
 
         [HttpGet]
         [Route("/UserInfo")]
-        public async Task<IActionResult> Get(int range = 5)
+        public IActionResult UserInfo()
         {
-            var userInfo = UserInfo;
+            var userInfo = UserLoginInfo;
 
-            var u = new
-            {
-                a = "A",
-                b = "B",
-                c = "C",
-                d = "D",
-            };
-
-            return Ok(u);
+            return Ok(userInfo);
         }
     }
 }

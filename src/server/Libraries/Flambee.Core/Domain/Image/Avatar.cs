@@ -1,5 +1,7 @@
 ﻿using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
+using Flambee.Core.Domain.UserDetails;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 using System;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,6 +9,7 @@ namespace Flambee.Core.Domain.Image
 {
     public class Avatar : BaseEntity
     {
+
         public string AvatarBase64 { get; set; }
         public string PreviewBase64 { get; set; }
         public string Title { get; set; }
@@ -19,9 +22,8 @@ namespace Flambee.Core.Domain.Image
         public string DisplayName { get; set; }
         public bool IsDeleted { get; set; }
 
-        [ForeignKey("ApplicationUser")]
-        public Guid UserId { get; set; }
-
-        public virtual ApplicationUser ApplicationUser { get; set; }
+        [BsonIgnore]
+        public ObjectId UserId { get; set; }
     }
+
 }

@@ -1,4 +1,5 @@
-﻿using Flambee.Core.Domain.Authentication;
+﻿using Flambee.Core.Domain.UserDetails;
+using Flambee.Core.Domain.Authentication;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using System;
@@ -12,57 +13,49 @@ namespace Flambee.Service.AppServiceProviders.Authentication
 {
     public class AuthService : IAuthService
     {
-        private readonly UserManager<ApplicationUser> _userManager;
-        private readonly SignInManager<ApplicationUser> _signInManager;
-        private readonly RoleManager<ApplicationRole> _roleManager;
-        
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<UserRole> _roleManager;
 
 
-        public AuthService(UserManager<ApplicationUser> userManager,
-            SignInManager<ApplicationUser> signInManager,
-            RoleManager<ApplicationRole> roleManager)
+
+        public AuthService(UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            RoleManager<UserRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _roleManager = roleManager;
         }
 
-        public async Task<IdentityResult> AddToRoleAsync(ApplicationUser user, string role)
+        public async Task<IdentityResult> AddToRoleAsync(User user, string role)
         {
             return await _userManager.AddToRoleAsync(user, role);
         }
 
-        public async Task<IdentityResult> AddToRolesAsync(ApplicationUser user, IEnumerable<string> roles)
+        public async Task<IdentityResult> AddToRolesAsync(User user, IEnumerable<string> roles)
         {
             return await _userManager.AddToRolesAsync(user, roles);
         }
 
-        public async Task<bool> CheckPasswordAsync(ApplicationUser user, string password)
+        public async Task<bool> CheckPasswordAsync(User user, string password)
         {
             return await _userManager.CheckPasswordAsync(user, password);
         }
 
-        public async Task<IdentityResult> CreateAsync(ApplicationUser user, string password)
+        public async Task<IdentityResult> CreateAsync(User user, string password)
         {
             return await _userManager.CreateAsync(user, password);
         }
 
-        public async Task<IdentityResult> CreateAsync(ApplicationRole role)
+        public async Task<IdentityResult> CreateRoleAsync(UserRole role)
         {
             return await _roleManager.CreateAsync(role);
         }
 
-        public async Task<ApplicationUser> FindByNameAsync(string userName)
-        {
-            return await _userManager.FindByNameAsync(userName);
-        }
+       
 
-        public async Task<ApplicationUser> FindByIdAsync(string userId)
-        {
-            return await _userManager.FindByIdAsync(userId);
-        }
-
-        public async Task<IList<string>> GetRolesAsync(ApplicationUser user)
+        public async Task<IList<string>> GetRolesAsync(User user)
         {
             return await _userManager.GetRolesAsync(user);
         }
@@ -72,7 +65,7 @@ namespace Flambee.Service.AppServiceProviders.Authentication
             return await _roleManager.RoleExistsAsync(roleName);
         }
 
-        public async Task SignInAsync(ApplicationUser user, bool isPersistent, string authenticationMethod = null)
+        public async Task SignInAsync(User user, bool isPersistent, string authenticationMethod = null)
         {
             await _signInManager.SignInAsync(user, isPersistent, authenticationMethod);
         }
@@ -82,18 +75,15 @@ namespace Flambee.Service.AppServiceProviders.Authentication
             await _signInManager.SignOutAsync();
         }
 
-        public async Task<IdentityResult> ResetPasswordAsync(ApplicationUser applicationUser, string token, string newPassword)
+        public async Task<IdentityResult> ResetPasswordAsync(User user, string token, string newPassword)
         {
-            return await _userManager.ResetPasswordAsync(applicationUser, token, newPassword);
+            return await _userManager.ResetPasswordAsync(user, token, newPassword);
         }
 
-        public async Task<string> GeneratePasswordResetTokenAsync(ApplicationUser applicationUser)
+        public async Task<string> GeneratePasswordResetTokenAsync(User user)
         {
-            var result = await _userManager.GeneratePasswordResetTokenAsync(applicationUser);
+            var result = await _userManager.GeneratePasswordResetTokenAsync(user);
             return result;
         }
-
-
-
     }
 }

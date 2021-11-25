@@ -1,116 +1,110 @@
 ﻿using Flambee.Core;
 using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
+using Flambee.Core.Domain.UserDetails;
 using Flambee.Data;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using MongoDB.Bson;
+using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Flambee.Service.AppServiceProviders.User
+namespace Flambee.Service.AppServiceProviders
 {
     public class UserService : IUserService
     {
-        private readonly IRepository<UserInfo> _userInfoRepository;
-        private readonly UserManager<ApplicationUser> _userManager;
+        private readonly IMongoRepository<User> _userRepository;
+        private readonly IMongoRepository<UserInfo> _userInfoRepository;
+        private readonly UserManager<User> _userManager;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserService(IRepository<UserInfo> userInfoRepository,
-            UserManager<ApplicationUser> userManager,
-            IHttpContextAccessor httpContextAccessor)
+        public UserService(IMongoRepository<User> userRepository,
+            UserManager<User> userManager,
+            IHttpContextAccessor httpContextAccessor,
+            IMongoRepository<UserInfo> userInfoRepository)
         {
-            _userInfoRepository = userInfoRepository;
+            _userRepository = userRepository;
             _userManager = userManager;
             _httpContextAccessor = httpContextAccessor;
+            _userInfoRepository = userInfoRepository;
         }
 
-        public async Task<UserInfo> GetUserInfoById(int id)
+        public async Task<User> GetUser(object id)
         {
-            if (id < 1)
-                return null;
-
-            var userInfo = await _userInfoRepository.GetByIdAsync(id);
-
-            if (userInfo != null)
-            {
-                userInfo.ApplicationUser = await _userManager.FindByIdAsync(userInfo.ApplicationUserId.ToString());
-            }
-
-            return userInfo;
+            return await _userRepository.GetById(id);
         }
 
-        public async Task<UserInfo> GetUserInfoById(Guid id)
+        public async Task<User> GetUser(string username = null, string email = null)
         {
-            return await _userInfoRepository.GetByProperty(x => x.ApplicationUserId == id);
+            if (!string.IsNullOrEmpty(username) && !string.IsNullOrEmpty(email))
+                return await _userRepository.Get(x => x.UserName.Equals(username) && x.Email.Equals(email));
+            else if (!string.IsNullOrEmpty(username))
+                return await _userRepository.Get(x => x.UserName.Equals(username));
+            else if (!string.IsNullOrEmpty(email))
+                return await _userRepository.Get(x => x.Email.Equals(email));
+
+            return null;
         }
 
-        public async Task<IList<UserInfo>> GetUserInfoByIds(IList<int> ids)
+        public async Task<IList<User>> GetUsers(IList<object> ids)
         {
-            return await _userInfoRepository.GetByIdsAsync((IList<object>)ids);
+            return await _userRepository.GetAll(x => ids.Contains(x.Id));
         }
 
-        public async Task<IList<UserInfo>> GetUserInfoByIds(IList<Guid> ids)
+        public async Task<User> FindById(object userId)
         {
-            var applicationUsers = await _userManager.Users.Where(x => ids.Contains(x.Id)).ToListAsync();
-            var userInfo = await _userInfoRepository.GetByIdsAsync((IList<object>)applicationUsers.Select(x => x.Id).ToList());
-
-            return userInfo;
+            return await _userManager.FindByIdAsync(userId.ToString());
         }
 
-        public async Task<UserInfo> CreateUserInfo(UserInfo userInfo)
+        public async Task<User> FindByUsername(string userName)
         {
-            return await _userInfoRepository.InsertAsync(userInfo);
+            return await _userManager.FindByNameAsync(userName);
         }
 
-        public async Task<UserInfo> UpdateUserInfo(UserInfo userInfo)
-        {
-            return await _userInfoRepository.UpdateAsync(userInfo);
-        }
-
-        public async Task UpdateUser(ApplicationUser user)
-        {
-            await _userManager.UpdateAsync(user);
-        }
-
-        public async Task DeleteUserInfo(UserInfo userInfo)
-        {
-            var applicationUser = await _userManager.Users.Where(x => x.Id == userInfo.ApplicationUserId).FirstOrDefaultAsync();
-
-            if (applicationUser != null)
-            {
-                await _userInfoRepository.DeleteAsync(userInfo);
-                await _userManager.DeleteAsync(applicationUser);
-            }
-
-        }
-
-        public async Task<ApplicationUser> GetLoggedInApplicationUserAsync()
-        {
-            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
-
-            if (user != null)
-            {
-                user.PasswordHash = null;
-                //user.UserInfo = _userInfoRepository.GetAllAsync(x => x.ApplicationUserId == user.Id).Result.FirstOrDefault();
-            }
-
-            return user;
-        }
-
-        public async Task<ApplicationUser> GetApplicationUserAsync(string email)
+        public async Task<User> FindByEmail(string email)
         {
             return await _userManager.FindByEmailAsync(email);
         }
 
-        public async Task<ApplicationUser> GetApplicationUser(Guid id)
+        public async Task<User> GetLoggedInApplicationUserAsync()
         {
-            return await _userManager.FindByIdAsync(id.ToString());
+            var user = await _userManager.GetUserAsync(_httpContextAccessor.HttpContext.User);
+            return user;
         }
 
+        public async Task<User> CreateUser(User user)
+        {
+             var result = await _userManager.CreateAsync(user);
+            return result.Succeeded ? user : null;
+        }
 
+        public async Task<User> UpdateUser(User user)
+        {
+            var result = await _userManager.UpdateAsync(user);
+            return result.Succeeded ? user : null;
+        }
+
+        public async Task<UserInfo> UpsertUserInfo(UserInfo userInfo)
+        {
+            await _userRepository.GetById(userInfo.Id);
+            var filter = Builders<UserInfo>.Filter.Eq(e => e.Id, userInfo.Id);
+            var option = new FindOneAndReplaceOptions<UserInfo> { IsUpsert = true, ReturnDocument = ReturnDocument.After };
+            return await _userInfoRepository.Collection.FindOneAndReplaceAsync(filter, userInfo, option);
+        }
+
+        public async Task DeleteUser(User user)
+        {
+            user.IsDeleted = true;
+            await _userRepository.Collection.FindOneAndReplaceAsync(x => x.Id == user.Id, user);
+        }
+
+        public async Task DeleteUserInfo(object userInfoId)
+        {
+            await _userInfoRepository.Delete(e => e.Id.Equals(userInfoId));
+        }
     }
 }

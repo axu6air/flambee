@@ -1,6 +1,7 @@
 ﻿using Flambee.Core.Configuration.Email;
+using Flambee.Core.Configuration.User;
 using Flambee.Core.Domain.Authentication;
-using Flambee.Core.Domain.User;
+using Flambee.Core.Domain.UserDetails;
 using Flambee.WebAPI.Models.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +25,7 @@ namespace Flambee.WebAPI.Factories.Auth
             _environment = environment;
         }
 
-        public RegistrationResponseModel PrepareRegistrationResponseModel(IdentityResult identityResultModel = null, ApplicationUser applicationUser = null)
+        public RegistrationResponseModel PrepareRegistrationResponseModel(IdentityResult identityResultModel = null, User user = null)
         {
             if (identityResultModel == null)
                 return new RegistrationResponseModel
@@ -40,13 +41,13 @@ namespace Flambee.WebAPI.Factories.Auth
                 Errors = identityResultModel.Errors.Select(x => x.Description).ToList(),
                 Status = identityResultModel.Succeeded ? StatusCodes.Status200OK : StatusCodes.Status400BadRequest,
                 Message = identityResultModel.Succeeded ? "Successfully registered" : "Registration unsuccessful",
-                UserId = identityResultModel.Succeeded ? applicationUser.Id : Guid.Empty
+                UserId = identityResultModel.Succeeded ? user.Id : Guid.Empty
             };
 
             return registrationResponseModel;
         }
 
-        public UserInfo PrepareUserInfo(RegistrationModel registrationModel, ApplicationUser applicationUser)
+        public UserInfo PrepareUserInfo(RegistrationModel registrationModel, User applicationUser)
         {
             return new UserInfo
             {
@@ -54,8 +55,6 @@ namespace Flambee.WebAPI.Factories.Auth
                 LastName = registrationModel.LastName,
                 PhoneNumber = registrationModel.PhoneNumber,
                 DateOfBirth = registrationModel.DateOfBirth,
-                ApplicationUser = applicationUser,
-                ApplicationUserId = applicationUser.Id
             };
         }
 
@@ -96,6 +95,18 @@ namespace Flambee.WebAPI.Factories.Auth
             {
                 return null;
             }
+        }
+
+        public  (bool isUsername, bool isEmail, bool isPhoneNumber) DetermineLoginMethod(string appliedUsername)
+        {
+            if (UserRules.IsUsernameValid(appliedUsername))
+                return (isUsername: true, isEmail: false, isPhoneNumber: false);
+            else if (UserRules.IsEmailValid(appliedUsername))
+                return (isUsername: false, isEmail: true, isPhoneNumber: false);
+            else if (UserRules.IsEmailValid(appliedUsername))
+                return (isUsername: false, isEmail: false, isPhoneNumber: true);
+
+            return (isUsername: false, isEmail: false, isPhoneNumber: false);
         }
     }
 }
