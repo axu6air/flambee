@@ -35,10 +35,10 @@ class ProfileUpdate extends Component {
   };
 
   getUserData = () => {
-    const { currentUser } = this.context;
+    //const { currentUser } = this.context;
     this.setState({ loading: true });
 
-    UserService.getUserProfileData(currentUser.applicationUserId)
+    UserService.getUserProfileData()
       .then((response) => {
         const userData = response;
         this.setState({ user: userData });

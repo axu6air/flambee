@@ -12,8 +12,8 @@ class ImageService {
     };
   };
 
-  getAvatar = async (userId) => {
-    return await axios.get(`/GetAvatar?userId=${userId}`);
+  getAvatar = async () => {
+    return await axios.get(`/GetAvatar`);
   };
 
   uploadAvatar = async (avatar, userId) => {

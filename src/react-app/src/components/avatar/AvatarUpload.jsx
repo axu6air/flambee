@@ -41,7 +41,7 @@ class AvatarUpload extends React.Component {
     ReactModal.setAppElement("#modal-man");
 
     if (this.props.userId) {
-      await ImageService.getAvatar(this.props.userId).then((response) => {
+      await ImageService.getAvatar().then((response) => {
         debugger;
         const avatar = response;
 

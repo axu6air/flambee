@@ -1,8 +1,8 @@
 import axios from "axios";
 
 class UserService {
-  getUserProfileData = async (userId) => {
-    return await axios.get(`/User/${userId}`);
+  getUserProfileData = async () => {
+    return await axios.get(`/User`);
   };
 }
 
