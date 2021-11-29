@@ -30,9 +30,10 @@ namespace Flambee.WebAPI.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> Get(ObjectId id)
+        [HttpGet]
+        public async Task<IActionResult> Get()
         {
+            var id = UserLoginInfo.UserId;
             var user = await _userService.GetUser(id);
 
             if (user == null)
