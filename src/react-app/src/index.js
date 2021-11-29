@@ -8,7 +8,13 @@ import "bootstrap/dist/css/bootstrap.css";
 
 axios.defaults.baseURL = "http://localhost:50447";
 const token = localStorage.getItem("bearerToken");
-axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+//axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+axios.interceptors.request.use((request) => {
+  request.headers.common.Authorization = `Bearer ${token}`;
+
+  return request;
+});
 
 axios.interceptors.response.use(
   (response) => {
