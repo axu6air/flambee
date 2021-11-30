@@ -42,7 +42,6 @@ class AvatarUpload extends React.Component {
 
     if (this.props.userId) {
       await ImageService.getAvatar().then((response) => {
-        debugger;
         const avatar = response;
 
         if (avatar && avatar.id) {

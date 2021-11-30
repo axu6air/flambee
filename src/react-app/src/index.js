@@ -6,11 +6,15 @@ import axios from "axios";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.css";
 
+// let axiosIns = axios.create({
+//   headers: {},
+// });
+
 axios.defaults.baseURL = "http://localhost:50447";
-const token = localStorage.getItem("bearerToken");
 //axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
 axios.interceptors.request.use((request) => {
+  const token = localStorage.getItem("bearerToken");
   request.headers.common.Authorization = `Bearer ${token}`;
 
   return request;
