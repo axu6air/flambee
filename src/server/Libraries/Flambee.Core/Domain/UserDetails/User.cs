@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
+using Flambee.Core.Domain.PostDetails;
 
 namespace Flambee.Core.Domain.UserDetails
 {
@@ -11,6 +12,9 @@ namespace Flambee.Core.Domain.UserDetails
         public User() : base() { }
 
         public User(string userName) : base(userName) { }
+
+        public DateTime UploadTime { get; set; }
+        public DateTime ModifiedTime { get; set; }
 
     }
 
@@ -25,6 +29,7 @@ namespace Flambee.Core.Domain.UserDetails
             Logins = new();
             Tokens = new();
             Avatars = new();
+            Posts = new();
             IsActive = true;
         }
 
@@ -46,6 +51,7 @@ namespace Flambee.Core.Domain.UserDetails
         public TwoFactorRecoveryCode TwoFactorRecoveryCode { get; set; }
 
         public List<Avatar> Avatars { get; set; }
+        public List<Post> Posts { get; set; }
 
         public bool IsActive { get; set; }
 

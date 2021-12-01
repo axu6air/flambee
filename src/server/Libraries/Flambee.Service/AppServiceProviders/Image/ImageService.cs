@@ -15,6 +15,7 @@ using MongoDB.Driver.Linq;
 using MongoDB.Bson;
 using MongoDB.Driver;
 using Flambee.Core.Domain.UserDetails;
+using Flambee.Core.Domain.PostDetails;
 
 namespace Flambee.Service.AppServiceProviders.Image
 {
@@ -97,7 +98,5 @@ namespace Flambee.Service.AppServiceProviders.Image
 
             return avatar != null && !avatar.IsDeleted ? avatar : null;
         }
-
-
     }
 }
