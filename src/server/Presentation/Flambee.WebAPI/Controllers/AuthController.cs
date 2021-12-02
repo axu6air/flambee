@@ -106,7 +106,7 @@ namespace Flambee.WebAPI.Controllers
                 DateOfBirth = model.DateOfBirth,
                 FirstName = model.FirstName,
                 LastName = model.LastName,  
-                PhoneNumber = model.PhoneNumber
+                //PhoneNumber = model.PhoneNumber
             };
 
             User user = new()
@@ -114,6 +114,7 @@ namespace Flambee.WebAPI.Controllers
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username,
+                PhoneNumber = model.PhoneNumber,
                 UserInfo = userInfo,
             };
 

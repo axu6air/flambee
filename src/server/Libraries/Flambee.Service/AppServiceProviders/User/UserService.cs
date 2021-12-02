@@ -62,7 +62,14 @@ namespace Flambee.Service.AppServiceProviders
 
         public async Task<User> FindByUsername(string userName)
         {
-            return await _userManager.FindByNameAsync(userName);
+            try
+            {
+                return await _userManager.FindByNameAsync(userName);
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
 
         public async Task<User> FindByEmail(string email)

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 
 namespace Flambee.WebAPI.Controllers
 {
-    [Authorize]
+    
     public class AvatarController : BaseImageController
     {
         private readonly IImageService _imageService;
@@ -70,6 +70,7 @@ namespace Flambee.WebAPI.Controllers
 
         [HttpGet]
         [Route("/GetAvatar")]
+        [Authorize]
         public async Task<IActionResult> GetUserAvatar()
         {
             var userId = UserLoginInfo.UserId;
