@@ -17,6 +17,7 @@ import EventBus from "../common/EventBus";
 import AuthService from "../service/Auth";
 import ErrorHandler from "./helper/ErrorHandler";
 import ProfileUpdate from "./profile/ProfileUpdate";
+import CreatePost from "./post/CreatePost";
 
 const App = () => {
   useEffect(() => {
@@ -77,6 +78,7 @@ const App = () => {
                 path="/ProfileUpdate"
                 component={ProfileUpdate}
               />
+              <PrivateRoute exact path="/CreatePost" component={CreatePost} />
               <AuthVerify />
             </ErrorHandler>
           </AuthProvider>
