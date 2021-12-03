@@ -35,7 +35,7 @@ namespace Flambee.WebAPI.Factories.Image
                 UploadTime = DateTime.Now,
                 ModifiedTime = DateTime.Now,
                 Title = model.Title,
-                Url = filePath,
+                VirtualPath = filePath,
             };
 
             return avatarModel;

@@ -24,15 +24,17 @@ namespace Flambee.WebAPI.Controllers
         private readonly IImageService _imageService;
         private readonly IImageFactory _imageFactory;
         private readonly IHostEnvironment _environment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUserService _userService;
 
 
-        public AvatarController(IImageService imageService, IImageFactory imageFactory, IHostEnvironment environment, IUserService userService)
+        public AvatarController(IImageService imageService, IImageFactory imageFactory, IHostEnvironment environment, IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _imageService = imageService;
             _imageFactory = imageFactory;
             _environment = environment;
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpPost, DisableRequestSizeLimit]
@@ -78,14 +80,21 @@ namespace Flambee.WebAPI.Controllers
 
 
             if (avatar != null)
+            {
+                var p = _environment.ContentRootPath;
+                var path = _webHostEnvironment.WebRootPath;
+                var filePath = _webHostEnvironment.WebRootPath + avatar.VirtualPath;
+
                 return Ok(new AvatarModel
                 {
                     AvatarBase64 = avatar.AvatarBase64,
                     PreviewBase64 = avatar.PreviewBase64,
                     Title = avatar.Title,
-                    Id = avatar.Id
+                    Id = avatar.Id,
+                    VirtualPath = filePath
 
                 });
+            }
 
             return BadRequest();
         }

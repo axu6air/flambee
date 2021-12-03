@@ -36,7 +36,6 @@ namespace Flambee.Service.AppServiceProviders.Image
             {
                 user.Avatars.Add(avatar);
                 await _userRepository.Update(user);
-
                 return avatar;
             }
 
