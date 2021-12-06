@@ -12,7 +12,7 @@ namespace Flambee.WebAPI.Models.Avatar
         public string AvatarBase64 { get; set; }
         public string PreviewBase64 { get; set; }
         public string Title { get; set; }
-        public string Url { get; set; }
+        public string VirtualPath { get; set; }
         public string MimeType { get; set; }
         public double DefaultHeight { get; set; }
         public double DefaultWidth { get; set; }

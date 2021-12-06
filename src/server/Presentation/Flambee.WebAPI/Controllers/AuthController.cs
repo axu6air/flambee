@@ -57,11 +57,11 @@ namespace Flambee.WebAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginModel model)
         {
             User user = null;
-            var result = _authFactory.DetermineLoginMethod(model.Username);
+            var (isUsername, isEmail, _) = _authFactory.DetermineLoginMethod(model.Username);
 
-            if (result.isUsername)
+            if (isUsername)
                 user = await _userService.FindByUsername(model.Username);
-            else if (result.isEmail)
+            else if (isEmail)
                 user = await _userService.FindByEmail(model.Username);
 
             if (user != null && await _authService.CheckPasswordAsync(user, model.Password))
@@ -105,8 +105,7 @@ namespace Flambee.WebAPI.Controllers
             {
                 DateOfBirth = model.DateOfBirth,
                 FirstName = model.FirstName,
-                LastName = model.LastName,  
-                PhoneNumber = model.PhoneNumber
+                LastName = model.LastName
             };
 
             User user = new()
@@ -114,6 +113,7 @@ namespace Flambee.WebAPI.Controllers
                 Email = model.Email,
                 SecurityStamp = Guid.NewGuid().ToString(),
                 UserName = model.Username,
+                PhoneNumber = model.PhoneNumber,
                 UserInfo = userInfo,
             };
 

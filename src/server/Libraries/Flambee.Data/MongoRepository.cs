@@ -15,7 +15,7 @@ namespace Flambee.Data
 {
     public class MongoRepository<TEntity> : IMongoRepository<TEntity> where TEntity : IBaseEntity
     {
-        private IMongoCollection<TEntity> _context;
+        private readonly IMongoCollection<TEntity> _context;
 
         public MongoRepository (IMongoDbSettings settings)
         {

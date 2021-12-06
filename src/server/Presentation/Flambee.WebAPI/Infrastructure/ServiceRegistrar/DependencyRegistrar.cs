@@ -20,7 +20,7 @@ namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
             service.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             service.AddSingleton<IBaseEntity, BaseEntity>();
             //service.AddScoped(typeof(IRepository<>), typeof(EntityRepository<>));
-            service.AddScoped(typeof(IMongoRepository<>), typeof(MongoRepository<>));
+            service.AddSingleton(typeof(IMongoRepository<>), typeof(MongoRepository<>));
 
             service.AddTransient<IUserService, UserService>();
             service.AddScoped<IAuthService, AuthService>();

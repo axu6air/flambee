@@ -18,21 +18,23 @@ using System.Threading.Tasks;
 
 namespace Flambee.WebAPI.Controllers
 {
-    [Authorize]
+    
     public class AvatarController : BaseImageController
     {
         private readonly IImageService _imageService;
         private readonly IImageFactory _imageFactory;
         private readonly IHostEnvironment _environment;
+        private readonly IWebHostEnvironment _webHostEnvironment;
         private readonly IUserService _userService;
 
 
-        public AvatarController(IImageService imageService, IImageFactory imageFactory, IHostEnvironment environment, IUserService userService)
+        public AvatarController(IImageService imageService, IImageFactory imageFactory, IHostEnvironment environment, IUserService userService, IWebHostEnvironment webHostEnvironment)
         {
             _imageService = imageService;
             _imageFactory = imageFactory;
             _environment = environment;
             _userService = userService;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         [HttpPost, DisableRequestSizeLimit]
@@ -70,6 +72,7 @@ namespace Flambee.WebAPI.Controllers
 
         [HttpGet]
         [Route("/GetAvatar")]
+        [Authorize]
         public async Task<IActionResult> GetUserAvatar()
         {
             var userId = UserLoginInfo.UserId;
@@ -77,14 +80,21 @@ namespace Flambee.WebAPI.Controllers
 
 
             if (avatar != null)
+            {
+                var p = _environment.ContentRootPath;
+                var path = _webHostEnvironment.WebRootPath;
+                var filePath = _webHostEnvironment.WebRootPath + avatar.VirtualPath;
+
                 return Ok(new AvatarModel
                 {
                     AvatarBase64 = avatar.AvatarBase64,
                     PreviewBase64 = avatar.PreviewBase64,
                     Title = avatar.Title,
-                    Id = avatar.Id
+                    Id = avatar.Id,
+                    VirtualPath = filePath
 
                 });
+            }
 
             return BadRequest();
         }
