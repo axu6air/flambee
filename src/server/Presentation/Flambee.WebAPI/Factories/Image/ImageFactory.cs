@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Flambee.Core.Configuration.Image;
 using Flambee.Core.Domain.Image;
 using Flambee.WebAPI.Models.Authentication;
 using Flambee.WebAPI.Models.Avatar;
@@ -20,22 +21,21 @@ namespace Flambee.WebAPI.Factories.Image
         }
 
 
-        public AvatarModel PrepareAvatarModel(AvatarUploadModel model, string filePath, int height = 0, int width = 0)
+        public AvatarModel PrepareAvatarModelForUpload(AvatarUploadModel model, string filename, int height = 0, int width = 0)
         {
             var avatarModel = new AvatarModel
             {
-                UserId = model.UserId,
-                AvatarBase64 = model.AvatarBase64,
+                ImageBase64 = model.AvatarBase64,
                 PreviewBase64 = model.PreviewBase64,
                 DisplayName = model.AvatarImage.FileName,
                 DefaultHeight = height,
                 DefaultWidth = width,
-                IsDeleted = false,
                 MimeType = model.AvatarImage.ContentType,
                 UploadTime = DateTime.Now,
                 ModifiedTime = DateTime.Now,
                 Title = model.Title,
-                VirtualPath = filePath,
+                Directory = ImagePath.AvatarDirectoryHierarchy,
+                FileName = filename,
             };
 
             return avatarModel;

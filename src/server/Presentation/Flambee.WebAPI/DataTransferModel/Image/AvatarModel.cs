@@ -11,6 +11,7 @@ namespace Flambee.WebAPI.DataTransferModel.Image
         public string AvatarBase64 { get; set; }
         public string PreviewBase64 { get; set; }
         public string Title { get; set; }
-        public string VirtualPath { get; set; }
+        public string ImageUrl { get; set; }
+
     }
 }

@@ -20,6 +20,7 @@ class AvatarUpload extends React.Component {
     avatarBase64: "",
     previewBase64: null,
     newAvatar: null,
+    url: null,
     showModal: false,
     title: "",
     loaded: 0,
@@ -43,6 +44,7 @@ class AvatarUpload extends React.Component {
     if (this.props.userId) {
       await ImageService.getAvatar().then((response) => {
         const avatar = response;
+        console.log(avatar.ImageUrl);
 
         if (avatar && avatar.id) {
           this.setState({
@@ -50,6 +52,7 @@ class AvatarUpload extends React.Component {
             avatarBase64: avatar.avatarBase64,
             previewBase64: avatar.previewBase64,
             title: avatar.title,
+            url: avatar.imageUrl,
           });
         }
       });

@@ -11,7 +11,7 @@ namespace Flambee.WebAPI.Factories.Image
 {
     public interface IImageFactory
     {
-        AvatarModel PrepareAvatarModel(AvatarUploadModel model, string filePath, int height = 0, int width = 0);
+        AvatarModel PrepareAvatarModelForUpload(AvatarUploadModel model, string filename, int height = 0, int width = 0);
         Avatar PrepareAvatarEntityModel(AvatarModel model);
 
     }

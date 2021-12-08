@@ -90,6 +90,7 @@ namespace Flambee.WebAPI
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>  endpoints.MapControllers());
+            app.UseStaticFiles();
         }
     }
 }

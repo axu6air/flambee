@@ -52,13 +52,13 @@ namespace Flambee.Service.AppServiceProviders.Image
 
         public string GetAvatarPath(string imageName)
         {
-            var path = CheckImagePath(ImagePath.AvatarPath);
+            var path = CheckImagePath(ImagePath.AvatarLocalDirectoryPath);
             return path + imageName;
         }
 
         public string GetPostImagePath(string imageName)
         {
-            var path = CheckImagePath(ImagePath.PostImagePath);
+            var path = CheckImagePath(ImagePath.PostImageLocalDirectoryPath);
             return path + imageName;
         }
 
@@ -97,5 +97,6 @@ namespace Flambee.Service.AppServiceProviders.Image
 
             return avatar != null && !avatar.IsDeleted ? avatar : null;
         }
+
     }
 }

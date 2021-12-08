@@ -10,8 +10,6 @@ namespace Flambee.Core.Domain.Image
     public class Avatar : BaseImageEntity
     {
 
-        public string AvatarBase64 { get; set; }
-
         [BsonIgnore]
         public ObjectId UserId { get; set; }
     }

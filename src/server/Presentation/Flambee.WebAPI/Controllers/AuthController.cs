@@ -305,6 +305,9 @@ namespace Flambee.WebAPI.Controllers
                     new Claim(ClaimTypes.Name, user.UserName),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim("UserID", user.Id.ToString()),
+                    new Claim("Email", user.Email.ToString()),
+                    new Claim("PhoneNumber", user.PhoneNumber.ToString()),
+                    new Claim("Username", user.UserName.ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()),
                 };
 
