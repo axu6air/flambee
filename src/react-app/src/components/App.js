@@ -18,6 +18,8 @@ import AuthService from "../service/Auth";
 import ErrorHandler from "./helper/ErrorHandler";
 import ProfileUpdate from "./profile/ProfileUpdate";
 import CreatePost from "./post/CreatePost";
+import PhotoGallery from "./Photo/PhotoGallery";
+
 
 const App = () => {
   useEffect(() => {
@@ -35,6 +37,9 @@ const App = () => {
   const logout = () => {
     AuthService.logout();
   };
+
+
+
 
   return (
     <>
@@ -73,12 +78,12 @@ const App = () => {
                 <ResetPassword />
               </Route>
               <PrivateRoute exact path="/Dashboard" component={Dashboard} />
+             
               <PrivateRoute
                 exact
                 path="/ProfileUpdate"
                 component={ProfileUpdate}
               />
-              <PrivateRoute exact path="/CreatePost" component={CreatePost} />
               <AuthVerify />
             </ErrorHandler>
           </AuthProvider>
