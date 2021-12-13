@@ -175,7 +175,7 @@ class AvatarUpload extends React.Component {
 
         <ReactModal
           isOpen={this.state.showModal}
-          contentLabel="Minimal Modal Example"
+          contentLabel="Avatar label"
           style={customStyles}
         >
           <span

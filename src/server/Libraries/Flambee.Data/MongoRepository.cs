@@ -17,7 +17,7 @@ namespace Flambee.Data
     {
         private readonly IMongoCollection<TEntity> _context;
 
-        public MongoRepository (IMongoDbSettings settings)
+        public MongoRepository(IMongoDbSettings settings)
         {
             var database = new MongoClient(settings.ConnectionString).GetDatabase(settings.DatabaseName);
             //_context = database.GetCollection<TEntity>(GetCollectionName(typeof(TEntity)));
@@ -118,14 +118,14 @@ namespace Flambee.Data
             }
         }
 
-        public IMongoCollection<TEntity> Collection 
+        public IMongoCollection<TEntity> Collection
         {
             get
             {
-                    return _context;
+                return _context;
             }
         }
-       
+
         private protected static string GetCollectionName(Type documentType)
         {
             return ((BsonCollectionAttribute)documentType.GetCustomAttributes(

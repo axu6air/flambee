@@ -39,9 +39,9 @@ namespace Flambee.Core
     public class BaseImageEntity : BaseEntity
     {
         public string ImageBase64 { get; set; }
-        public string PreviewBase64 { get; set; }
+        
         public string Title { get; set; }
-        public string Directory { get; set; }
+        public virtual string Directory { get; set; }
         public string MimeType { get; set; }
         public double DefaultHeight { get; set; }
         public double DefaultWidth { get; set; }

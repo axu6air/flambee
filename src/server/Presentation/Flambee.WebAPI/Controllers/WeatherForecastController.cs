@@ -57,7 +57,7 @@ namespace Flambee.WebAPI.Controllers
         [Route("/UserInfo")]
         public IActionResult UserInfo()
         {
-            var userInfo = UserLoginInfo;
+            var userInfo = LoggedInUserModel;
 
             return Ok(userInfo);
         }

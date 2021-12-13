@@ -20,7 +20,7 @@ namespace Flambee.Service.AppServiceProviders
         Task<User> GetLoggedInApplicationUserAsync();
         Task<User> CreateUser(User user);
         Task<User> UpdateUser(User user);
-        Task<UserInfo> UpsertUserInfo(UserInfo userInfo);
+        Task<User> UpsertUser(User user);
         Task DeleteUser(User user);
         Task DeleteUserInfo(object userInfoId);
     }

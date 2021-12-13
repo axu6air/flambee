@@ -95,12 +95,11 @@ namespace Flambee.Service.AppServiceProviders
             return result.Succeeded ? user : null;
         }
 
-        public async Task<UserInfo> UpsertUserInfo(UserInfo userInfo)
+        public async Task<User> UpsertUser(User user)
         {
-            await _userRepository.GetById(userInfo.Id);
-            var filter = Builders<UserInfo>.Filter.Eq(e => e.Id, userInfo.Id);
-            var option = new FindOneAndReplaceOptions<UserInfo> { IsUpsert = true, ReturnDocument = ReturnDocument.After };
-            return await _userInfoRepository.Collection.FindOneAndReplaceAsync(filter, userInfo, option);
+            var filter = Builders<User>.Filter.Eq(e => e.Id, user.Id);
+            var option = new FindOneAndReplaceOptions<User> { IsUpsert = true, ReturnDocument = ReturnDocument.After };
+            return await _userRepository.Collection.FindOneAndReplaceAsync(filter, user, option);
         }
 
         public async Task DeleteUser(User user)

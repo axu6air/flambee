@@ -78,7 +78,7 @@ namespace Flambee.WebAPI.Controllers
         [Authorize]
         public async Task<IActionResult> GetUserAvatar()
         {
-            var userId = UserLoginInfo.UserId;
+            var userId = LoggedInUserModel.UserId;
             var avatar = await _imageService.GetAvatar(userId);
             string url = "";
 

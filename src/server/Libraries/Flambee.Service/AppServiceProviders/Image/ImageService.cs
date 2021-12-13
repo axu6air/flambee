@@ -28,6 +28,12 @@ namespace Flambee.Service.AppServiceProviders.Image
         {
             _userRepository = userRepository;
             _environment = environment;
+
+            if (!Directory.Exists(ImagePath.AvatarLocalDirectoryPath))
+                Directory.CreateDirectory(ImagePath.AvatarLocalDirectoryPath);
+
+            if (!Directory.Exists(ImagePath.PostImageLocalDirectoryPath))
+                Directory.CreateDirectory(ImagePath.PostImageLocalDirectoryPath);
         }
 
         public async Task<Avatar> AddAvatar(User user, Avatar avatar)

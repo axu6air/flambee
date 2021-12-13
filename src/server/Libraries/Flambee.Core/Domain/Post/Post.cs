@@ -12,12 +12,11 @@ namespace Flambee.Core.Domain.PostDetails
         public Post()
         {
             PostImages = new();
-            SharedFrom = null;
+            SharedFrom = ObjectId.Empty;
         }
 
         public string Title { get; set; }
-
-        public Post SharedFrom { get; set; }
+        public ObjectId SharedFrom { get; set; }
         public List<PostImage> PostImages { get; set; }
     }
 }

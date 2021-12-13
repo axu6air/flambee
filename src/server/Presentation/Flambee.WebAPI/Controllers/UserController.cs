@@ -33,7 +33,7 @@ namespace Flambee.WebAPI.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var id = UserLoginInfo.UserId;
+            var id = LoggedInUserModel.UserId;
             var user = await _userService.GetUser(id);
 
             if (user == null)

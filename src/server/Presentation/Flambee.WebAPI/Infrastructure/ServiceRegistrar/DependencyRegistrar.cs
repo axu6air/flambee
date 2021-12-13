@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.Http;
 using Flambee.WebAPI.Factories;
 using Flambee.Data;
 using AspNetCore.Identity.MongoDbCore.Infrastructure;
+using Flambee.Service.AppServiceProviders.PostDetails;
 
 namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
 {
@@ -26,6 +27,7 @@ namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
             service.AddScoped<IAuthService, AuthService>();
             service.AddScoped<IEmailService, EmailService>();
             service.AddScoped<IImageService, ImageService>();
+            service.AddScoped<IPostService, PostService>();
 
             service.AddScoped<IAuthFactory, AuthFactory>();
             service.AddScoped<IImageFactory, ImageFactory>();
