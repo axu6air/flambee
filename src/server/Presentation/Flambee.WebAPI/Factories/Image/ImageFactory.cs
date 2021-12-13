@@ -25,10 +25,6 @@ namespace Flambee.WebAPI.Factories.Image
             _mapper = mapper;
             _imageService = imageService;
             _webHostEnvironment = webHostEnvironment;
-
-            
-
-            
         }
 
 
