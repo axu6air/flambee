@@ -6,6 +6,7 @@ using Flambee.Service.AppServiceProviders.Image;
 using Flambee.Service.AppServiceProviders.PostDetails;
 using Flambee.WebAPI.DataTransferModel.Post;
 using Flambee.WebAPI.Factories.Image;
+using Flambee.WebAPI.Models.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using MongoDB.Bson;
@@ -43,27 +44,27 @@ namespace Flambee.WebAPI.Controllers
         }
 
         [HttpPost, DisableRequestSizeLimit]
-        [Route("/Create")]
+        [Route("/Post/Create")]
         [Authorize]
-        public async Task<IActionResult> Create([FromForm] PostCreateModel model)
+        public async Task<IActionResult> Create([FromForm] AvatarUploadModel model)
         {
-            if (model != null && model.PostImages.Count > 0)
-            {
-                var postImages = new List<PostImage>();
+            //if (model != null && model.PostImages.Count > 0)
+            //{
+            //    var postImages = new List<PostImage>();
 
-                foreach (var postImageModel in model.PostImages)
-                {
-                    var postImage = _mapper.Map<PostImage>(postImageModel);
-                    postImage.FileName = await _imageFactory.UploadImage(postImageModel.Image, ImageType.Post);
-                    postImages.Add(postImage);
-                }
+            //    foreach (var postImageModel in model.PostImages)
+            //    {
+            //        var postImage = _mapper.Map<PostImage>(postImageModel);
+            //        postImage.FileName = await _imageFactory.UploadImage(postImageModel.Image.File, ImageType.Post);
+            //        postImages.Add(postImage);
+            //    }
 
-                var post = _mapper.Map<Post>(model);
-                post.PostImages = postImages;
-                var user = await GetUser();
-                user.Posts.Add(post);
-                await _userService.UpsertUser(user);
-            }
+            //    var post = _mapper.Map<Post>(model);
+            //    post.PostImages = postImages;
+            //    var user = await GetUser();
+            //    user.Posts.Add(post);
+            //    await _userService.UpsertUser(user);
+            //}
 
 
             return Ok();

@@ -40,7 +40,16 @@ namespace Flambee.Data
         }
         public async Task<TEntity> Get(Expression<Func<TEntity, bool>> predicate = null)
         {
-            return (TEntity)await _context.FindAsync(predicate);
+            try
+            {
+                var res = await _context.Find(predicate).FirstOrDefaultAsync();
+                return (TEntity)res;
+
+            } catch (Exception ex)
+            {
+            }
+
+            return default;
         }
 
         public async Task<IList<TEntity>> GetAll(Expression<Func<TEntity, bool>> predicate = null)
