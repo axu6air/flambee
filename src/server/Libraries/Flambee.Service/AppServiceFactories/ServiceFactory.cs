@@ -20,7 +20,7 @@ namespace Flambee.Service.AppServiceFactories
         {
             _userService = userService;
         }
-        public PostService GetPostService(ObjectId userId)
+        public IPostService GetPostService(ObjectId userId)
         {
             if(userId == _userId)
             {
