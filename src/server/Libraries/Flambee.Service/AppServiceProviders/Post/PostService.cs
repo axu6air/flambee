@@ -14,7 +14,7 @@ namespace Flambee.Service.AppServiceProviders.PostDetails
 {
     public class PostService : UserBaseService, IPostService
     {
-
+         
         public PostService(
                 IUserService userService,
                 ObjectId userId
