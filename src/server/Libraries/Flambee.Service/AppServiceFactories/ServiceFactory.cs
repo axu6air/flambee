@@ -12,19 +12,25 @@ namespace Flambee.Service.AppServiceFactories
     public class ServiceFactory
     {
         private readonly IUserService _userService;
-        private readonly ObjectId _userId;
         private PostService _postService = null;
+        private ObjectId _userId = new ObjectId();
         public ServiceFactory(
-                IUserService userService,
-                ObjectId userId
+                IUserService userService
             )
         {
             _userService = userService;
-            _userId = userId;
         }
-        public  PostService GetPostService() // caching will not work currently need to use singelton or key pair caching for the service creation.
+        public PostService GetPostService(ObjectId userId)
         {
-            _postService = _postService ?? new PostService(_userService, _userId);
+            if(userId == _userId)
+            {
+                _postService = _postService ?? new PostService(_userService, userId);
+            }
+            else
+            {
+                _postService = new PostService(_userService, userId);
+                _userId = userId;
+            }
             return _postService;
         }
     }

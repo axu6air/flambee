@@ -7,6 +7,7 @@ using Flambee.Service.AppServiceProviders.Image;
 using Flambee.Service.AppServiceProviders.PostDetails;
 using Flambee.WebAPI.DataTransferModel.Post;
 using Flambee.WebAPI.Factories.Image;
+using Flambee.WebAPI.Infrastructure.ServiceRegistrar;
 using Flambee.WebAPI.Models.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,26 +22,28 @@ namespace Flambee.WebAPI.Controllers
         private readonly IUserService _userService;
         private readonly IImageService _imageService;
         private readonly IImageFactory _imageFactory;
+        private readonly ServiceFactory _serviceFactory;
         private readonly IMapper _mapper;
-
         public PostController(
                 IUserService userService,
                 IMapper mapper, 
                 IImageService imageService,
-                IImageFactory imageFactory
+                IImageFactory imageFactory,
+                ServiceFactory serviceFactory
             )
         {
             _userService = userService;
             _mapper = mapper;
             _imageService = imageService;
             _imageFactory = imageFactory;
+            _serviceFactory = serviceFactory;
         }
 
         [HttpGet]
         [Route("/GetPosts")]
         public async Task<IActionResult> Get(ObjectId userId)
         {
-            var postService = new ServiceFactory(_userService, userId).GetPostService();
+            var postService = _serviceFactory.GetPostService(userId);
             var posts = await postService.GetPosts();
             return Ok(posts);
         }
