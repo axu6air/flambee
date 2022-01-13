@@ -27,7 +27,7 @@ namespace Flambee.WebAPI.Infrastructure.ServiceRegistrar
             service.AddScoped<IAuthService, AuthService>();
             service.AddScoped<IEmailService, EmailService>();
             service.AddScoped<IImageService, ImageService>();
-            service.AddScoped<IPostService, PostService>();
+            //service.AddScoped<IPostService, PostService>();
 
             service.AddScoped<IAuthFactory, AuthFactory>();
             service.AddScoped<IImageFactory, ImageFactory>();

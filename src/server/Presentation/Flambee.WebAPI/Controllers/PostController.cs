@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Flambee.Core.Configuration.Image;
 using Flambee.Core.Domain.PostDetails;
+using Flambee.Service.AppServiceFactories;
 using Flambee.Service.AppServiceProviders;
 using Flambee.Service.AppServiceProviders.Image;
 using Flambee.Service.AppServiceProviders.PostDetails;
@@ -20,13 +21,16 @@ namespace Flambee.WebAPI.Controllers
         private readonly IUserService _userService;
         private readonly IImageService _imageService;
         private readonly IImageFactory _imageFactory;
-        private readonly IPostService _postService;
         private readonly IMapper _mapper;
 
-        public PostController(IUserService userService, IPostService postService, IMapper mapper, IImageService imageService, IImageFactory imageFactory)
+        public PostController(
+                IUserService userService,
+                IMapper mapper, 
+                IImageService imageService,
+                IImageFactory imageFactory
+            )
         {
             _userService = userService;
-            _postService = postService;
             _mapper = mapper;
             _imageService = imageService;
             _imageFactory = imageFactory;
@@ -36,10 +40,8 @@ namespace Flambee.WebAPI.Controllers
         [Route("/GetPosts")]
         public async Task<IActionResult> Get(ObjectId userId)
         {
-            var user = await _userService.GetUser(userId);
-            var posts = await _postService.GetPosts(user);
-
-
+            var postService = new ServiceFactory(_userService, userId).GetPostService();
+            var posts = await postService.GetPosts();
             return Ok(posts);
         }
 

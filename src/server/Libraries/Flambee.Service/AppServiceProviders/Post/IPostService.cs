@@ -1,5 +1,6 @@
 ﻿using Flambee.Core.Domain.PostDetails;
 using Flambee.Core.Domain.UserDetails;
+using MongoDB.Bson;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,6 +11,6 @@ namespace Flambee.Service.AppServiceProviders.PostDetails
 {
     public interface IPostService
     {
-        Task<List<Post>> GetPosts(User user);
+        Task<List<Post>> GetPosts();
     }
 }
